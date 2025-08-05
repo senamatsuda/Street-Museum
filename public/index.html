@@ -12,20 +12,30 @@
 </head>
 <body>
   <h1>街角美術館</h1>
-  <p id="status">現在位置を確認しています...</p>
-  <div id="map"></div>
-  <div id="artwork" class="hidden">
-    <h2 id="art-title"></h2>
-    <img id="art-image" src="" alt="">
-    <audio id="art-audio" controls class="hidden"></audio>
-    <p id="art-description"></p>
+  <div class="tabs">
+    <button id="tab-map" class="active">地図</button>
+    <button id="tab-post">投稿</button>
   </div>
-  <h2>作品を投稿</h2>
-  <form id="post-form">
-    <input type="text" id="new-title" placeholder="タイトル">
-    <input type="file" id="new-file" accept="image/*,audio/*">
-    <button type="button" id="post-btn">投稿</button>
-  </form>
+
+  <div id="map-section">
+    <p id="status">現在位置を確認しています...</p>
+    <div id="map"></div>
+    <div id="artwork" class="hidden">
+      <h2 id="art-title"></h2>
+      <img id="art-image" src="" alt="">
+      <audio id="art-audio" controls class="hidden"></audio>
+      <p id="art-description"></p>
+    </div>
+  </div>
+
+  <div id="post-section" class="hidden">
+    <h2>作品を投稿</h2>
+    <form id="post-form">
+      <input type="text" id="new-title" placeholder="タイトル">
+      <input type="file" id="new-file" accept="image/*,audio/*">
+      <button type="button" id="post-btn">投稿</button>
+    </form>
+  </div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="app.js"></script>
 </body>

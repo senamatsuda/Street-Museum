@@ -16,6 +16,10 @@ const artTitle = document.getElementById('art-title');
 const artImage = document.getElementById('art-image');
 const artAudio = document.getElementById('art-audio');
 const artDescription = document.getElementById('art-description');
+const mapSection = document.getElementById('map-section');
+const postSection = document.getElementById('post-section');
+const tabMap = document.getElementById('tab-map');
+const tabPost = document.getElementById('tab-post');
 
 let map;
 let userLat;
@@ -35,6 +39,23 @@ function distanceMeters(lat1, lon1, lat2, lon2) {
 function showError(err) {
   status.textContent = `位置情報を取得できません: ${err.message}`;
 }
+
+tabMap.addEventListener('click', () => {
+  mapSection.classList.remove('hidden');
+  postSection.classList.add('hidden');
+  tabMap.classList.add('active');
+  tabPost.classList.remove('active');
+  if (map) {
+    setTimeout(() => map.invalidateSize(), 0);
+  }
+});
+
+tabPost.addEventListener('click', () => {
+  mapSection.classList.add('hidden');
+  postSection.classList.remove('hidden');
+  tabPost.classList.add('active');
+  tabMap.classList.remove('active');
+});
 
 if ('geolocation' in navigator) {
   navigator.geolocation.getCurrentPosition(position => {
