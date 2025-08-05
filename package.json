@@ -1,0 +1,10 @@
+{
+  "name": "street-museum",
+  "version": "0.1.0",
+  "description": "Prototype for location-based street museum",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"No tests specified\""
+  }
+}
