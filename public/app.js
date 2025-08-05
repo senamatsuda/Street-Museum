@@ -28,8 +28,20 @@ const searchBtn = document.getElementById('search-btn');
 const searchStatus = document.getElementById('search-status');
 const searchResults = document.getElementById('search-results');
 
-const imageIcon = L.divIcon({ html: '🖼️', className: 'media-marker', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -24] });
-const audioIcon = L.divIcon({ html: '🎵', className: 'media-marker', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -24] });
+const imageIcon = L.divIcon({
+  html: '🖼️',
+  className: 'media-marker',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32]
+});
+const audioIcon = L.divIcon({
+  html: '🎵',
+  className: 'media-marker',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32]
+});
 
 let map;
 let userLat;
