@@ -1,10 +1,10 @@
 const artworks = [
   {
-    title: "サンプルアート",
-    lat: 35.6895,
-    lng: 139.6917,
-    image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+V67MAAAAASUVORK5CYII=",
-    description: "新宿の写真です。"
+    title: "広島大学中央図書館",
+    lat: 34.4071,
+    lng: 132.7129,
+    image: "higashihiroshima.jpeg",
+    description: "広島大学東広島キャンパスの中央図書館です。"
   }
 ];
 
