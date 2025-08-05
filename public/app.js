@@ -1,10 +1,11 @@
 const DEFAULT_ARTWORKS = [
   {
     title: "広島大学中央図書館",
-    lat: 34.403244, 
+    lat: 34.403244,
     lng: 132.713469,
     image: "higashihiroshima.jpeg",
-    description: "広島大学東広島キャンパスの中央図書館です。"
+    description: "広島大学東広島キャンパスの中央図書館です。",
+    type: 'image'
   }
 ];
 
@@ -25,6 +26,9 @@ const searchBox = document.getElementById('search-box');
 const locationInput = document.getElementById('location-input');
 const searchBtn = document.getElementById('search-btn');
 const searchStatus = document.getElementById('search-status');
+
+const imageIcon = L.divIcon({ html: '🖼️', className: 'media-marker', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -24] });
+const audioIcon = L.divIcon({ html: '🎵', className: 'media-marker', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -24] });
 
 let map;
 let userLat;
@@ -118,7 +122,9 @@ if ('geolocation' in navigator) {
     const storedArtworks = JSON.parse(localStorage.getItem('userArtworks') || '[]');
     artworks = DEFAULT_ARTWORKS.concat(storedArtworks);
     artworks.forEach(a => {
-      L.marker([a.lat, a.lng]).addTo(map).bindPopup(a.title);
+      const icon = a.type === 'audio' ? audioIcon : imageIcon;
+      const popupContent = `${a.type === 'audio' ? 'Audio' : 'Image'}: ${a.title}`;
+      L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(popupContent);
     });
     displayNearby();
   }, showError);
@@ -175,7 +181,9 @@ document.getElementById('post-btn').addEventListener('click', () => {
     stored.push(newArt);
     localStorage.setItem('userArtworks', JSON.stringify(stored));
     artworks.push(newArt);
-    L.marker([newArt.lat, newArt.lng]).addTo(map).bindPopup(newArt.title);
+    const icon = newArt.type === 'audio' ? audioIcon : imageIcon;
+    const popupContent = `${newArt.type === 'audio' ? 'Audio' : 'Image'}: ${newArt.title}`;
+    L.marker([newArt.lat, newArt.lng], { icon }).addTo(map).bindPopup(popupContent);
     displayNearby();
     alert('投稿しました');
   };
