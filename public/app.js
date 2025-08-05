@@ -1,15 +1,15 @@
 const DEFAULT_ARTWORKS = [
   {
-    title: "広島大学中央図書館",
+    title: "Hiroshima University Central Library",
     lat: 34.403244,
     lng: 132.713469,
     image: "higashihiroshima.jpeg",
-    description: "広島大学東広島キャンパスの中央図書館です。",
+    description: "Central library at Hiroshima University's Higashihiroshima Campus.",
     type: 'image'
   }
 ];
 
-const THRESHOLD_METERS = 50; // 50m以内で表示
+const THRESHOLD_METERS = 50; // display within 50m
 
 const status = document.getElementById('status');
 const artworkDiv = document.getElementById('artwork');
@@ -51,10 +51,6 @@ let selectedLat;
 let selectedLng;
 let searchMarker;
 
-function getMediaLabel(type) {
-  return type === 'audio' ? 'Audio' : 'Image';
-}
-
 function distanceMeters(lat1, lon1, lat2, lon2) {
   const R = 6371e3;
   const toRad = deg => deg * Math.PI / 180;
@@ -66,7 +62,7 @@ function distanceMeters(lat1, lon1, lat2, lon2) {
 }
 
 function showError(err) {
-  status.textContent = `位置情報を取得できません: ${err.message}`;
+  status.textContent = `Unable to retrieve location: ${err.message}`;
 }
 
 tabMap.addEventListener('click', () => {
@@ -99,7 +95,7 @@ for (const input of locModeInputs) {
 searchBtn.addEventListener('click', () => {
   const query = locationInput.value.trim();
   if (!query) return;
-  searchStatus.textContent = '検索中...';
+  searchStatus.textContent = 'Searching...';
   searchResults.innerHTML = '';
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
     .then(res => res.json())
@@ -107,14 +103,14 @@ searchBtn.addEventListener('click', () => {
       if (data.length > 0) {
         selectedLat = null;
         selectedLng = null;
-        searchStatus.textContent = '検索結果を選択';
+        searchStatus.textContent = 'Select a result';
         data.slice(0, 5).forEach(result => {
           const li = document.createElement('li');
           li.textContent = result.display_name;
           li.addEventListener('click', () => {
             selectedLat = parseFloat(result.lat);
             selectedLng = parseFloat(result.lon);
-            searchStatus.textContent = `選択中: ${result.display_name}`;
+            searchStatus.textContent = `Selected: ${result.display_name}`;
             if (searchMarker) {
               map.removeLayer(searchMarker);
             }
@@ -128,11 +124,11 @@ searchBtn.addEventListener('click', () => {
           searchResults.appendChild(li);
         });
       } else {
-        searchStatus.textContent = '場所が見つかりません';
+        searchStatus.textContent = 'No locations found';
       }
     })
     .catch(() => {
-      searchStatus.textContent = '検索エラー';
+      searchStatus.textContent = 'Search error';
     });
 });
 
@@ -150,26 +146,26 @@ if ('geolocation' in navigator) {
       color: 'red',
       fillColor: 'red',
       fillOpacity: 0.5
-    }).addTo(map).bindPopup('現在地').openPopup();
+    }).addTo(map).bindPopup('Current location').openPopup();
     const storedArtworks = JSON.parse(localStorage.getItem('userArtworks') || '[]');
     artworks = DEFAULT_ARTWORKS.concat(storedArtworks);
     artworks.forEach(a => {
       const icon = a.type === 'audio' ? audioIcon : imageIcon;
-      const popupContent = `${getMediaLabel(a.type)}: ${a.title}`;
+      const popupContent = a.title;
       const marker = L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(popupContent);
       marker.on('click', () => showArtwork(a));
     });
-    status.textContent = "近くのマーカーをクリックすると作品を閲覧できます。";
+    status.textContent = "Click nearby markers to view artworks.";
   }, showError);
 } else {
-  status.textContent = "このブラウザは位置情報に対応していません。";
+  status.textContent = "This browser does not support geolocation.";
 }
 
 function showArtwork(art) {
   const within = distanceMeters(userLat, userLng, art.lat, art.lng) < THRESHOLD_METERS;
   if (within) {
-    status.textContent = "ようこそ！";
-    artTitle.textContent = `${getMediaLabel(art.type)}: ${art.title}`;
+    status.textContent = "Welcome!";
+    artTitle.textContent = art.title;
     if (art.type === 'audio') {
       artImage.classList.add('hidden');
       artAudio.classList.remove('hidden');
@@ -182,7 +178,7 @@ function showArtwork(art) {
     artDescription.textContent = art.description || '';
     artworkDiv.classList.remove('hidden');
   } else {
-    status.textContent = "指定の地点に移動してから作品をご覧ください。";
+    status.textContent = "Move to the specified location to view the artwork.";
     artworkDiv.classList.add('hidden');
   }
 }
@@ -215,10 +211,10 @@ document.getElementById('post-btn').addEventListener('click', () => {
     localStorage.setItem('userArtworks', JSON.stringify(stored));
     artworks.push(newArt);
     const icon = newArt.type === 'audio' ? audioIcon : imageIcon;
-    const popupContent = `${getMediaLabel(newArt.type)}: ${newArt.title}`;
+    const popupContent = newArt.title;
     const marker = L.marker([newArt.lat, newArt.lng], { icon }).addTo(map).bindPopup(popupContent);
     marker.on('click', () => showArtwork(newArt));
-    alert('投稿しました');
+    alert('Posted successfully');
   };
   reader.readAsDataURL(file);
 });

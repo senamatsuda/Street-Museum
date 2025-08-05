@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>街角美術館</title>
+  <title>Street Museum</title>
   <link rel="stylesheet" href="style.css">
   <link
     rel="stylesheet"
@@ -11,14 +11,14 @@
   />
 </head>
 <body>
-  <h1>街角美術館</h1>
+  <h1>Street Museum</h1>
   <div class="tabs">
-    <button id="tab-map" class="active">地図</button>
-    <button id="tab-post">投稿</button>
+    <button id="tab-map" class="active">Map</button>
+    <button id="tab-post">Post</button>
   </div>
 
   <div id="map-section">
-    <p id="status">現在位置を確認しています...</p>
+    <p id="status">Checking current location...</p>
     <div id="map"></div>
     <div id="artwork" class="hidden">
       <h2 id="art-title"></h2>
@@ -29,21 +29,21 @@
   </div>
 
   <div id="post-section" class="hidden">
-    <h2>作品を投稿</h2>
+    <h2>Post Artwork</h2>
     <form id="post-form">
-      <input type="text" id="new-title" placeholder="タイトル">
+      <input type="text" id="new-title" placeholder="Title">
       <input type="file" id="new-file" accept="image/*,audio/*">
       <div class="location-options">
-        <label><input type="radio" name="loc-mode" value="current" checked> 現在地を使用</label>
-        <label><input type="radio" name="loc-mode" value="search"> 場所名で検索</label>
+        <label><input type="radio" name="loc-mode" value="current" checked> Use current location</label>
+        <label><input type="radio" name="loc-mode" value="search"> Search by place name</label>
       </div>
       <div id="search-box" class="hidden">
-        <input type="text" id="location-input" placeholder="場所を検索">
-        <button type="button" id="search-btn">検索</button>
+        <input type="text" id="location-input" placeholder="Search location">
+        <button type="button" id="search-btn">Search</button>
         <p id="search-status"></p>
         <ul id="search-results"></ul>
       </div>
-      <button type="button" id="post-btn">投稿</button>
+      <button type="button" id="post-btn">Post</button>
     </form>
   </div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
