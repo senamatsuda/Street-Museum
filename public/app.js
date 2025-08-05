@@ -1,0 +1,49 @@
+const artworks = [
+  {
+    title: "サンプルアート",
+    lat: 35.6895,
+    lng: 139.6917,
+    image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+V67MAAAAASUVORK5CYII=",
+    description: "新宿の写真です。"
+  }
+];
+
+const THRESHOLD_METERS = 100; // 100m以内で表示
+
+const status = document.getElementById('status');
+const artworkDiv = document.getElementById('artwork');
+const artTitle = document.getElementById('art-title');
+const artImage = document.getElementById('art-image');
+const artDescription = document.getElementById('art-description');
+
+function distanceMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371e3;
+  const toRad = deg => deg * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat/2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function showError(err) {
+  status.textContent = `位置情報を取得できません: ${err.message}`;
+}
+
+if ('geolocation' in navigator) {
+  navigator.geolocation.getCurrentPosition(position => {
+    const { latitude, longitude } = position.coords;
+    const nearby = artworks.find(a => distanceMeters(latitude, longitude, a.lat, a.lng) < THRESHOLD_METERS);
+    if (nearby) {
+      status.textContent = "ようこそ！";
+      artTitle.textContent = nearby.title;
+      artImage.src = nearby.image;
+      artDescription.textContent = nearby.description;
+      artworkDiv.classList.remove('hidden');
+    } else {
+      status.textContent = "この場所では作品を閲覧できません。指定された地点に行ってください。";
+    }
+  }, showError);
+} else {
+  status.textContent = "このブラウザは位置情報に対応していません。";
+}
