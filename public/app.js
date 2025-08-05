@@ -66,7 +66,12 @@ if ('geolocation' in navigator) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
-    L.marker([latitude, longitude]).addTo(map).bindPopup('現在地').openPopup();
+    L.circleMarker([latitude, longitude], {
+      radius: 8,
+      color: 'red',
+      fillColor: 'red',
+      fillOpacity: 0.5
+    }).addTo(map).bindPopup('現在地').openPopup();
     const storedArtworks = JSON.parse(localStorage.getItem('userArtworks') || '[]');
     artworks = DEFAULT_ARTWORKS.concat(storedArtworks);
     artworks.forEach(a => {
