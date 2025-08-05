@@ -70,3 +70,23 @@ img {
 #search-results li.selected {
   background: #e0e0e0;
 }
+
+@media (orientation: landscape) {
+  #map-section {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  #status {
+    width: 100%;
+  }
+  #map,
+  #artwork {
+    flex: 1;
+  }
+  #artwork {
+    margin-left: 1rem;
+  }
+  #map {
+    height: 80vh;
+  }
+}
