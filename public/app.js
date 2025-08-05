@@ -26,9 +26,22 @@ const searchBox = document.getElementById('search-box');
 const locationInput = document.getElementById('location-input');
 const searchBtn = document.getElementById('search-btn');
 const searchStatus = document.getElementById('search-status');
+const searchResults = document.getElementById('search-results');
 
-const imageIcon = L.divIcon({ html: '🖼️', className: 'media-marker', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -24] });
-const audioIcon = L.divIcon({ html: '🎵', className: 'media-marker', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -24] });
+const imageIcon = L.divIcon({
+  html: '🖼️',
+  className: 'media-marker',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32]
+});
+const audioIcon = L.divIcon({
+  html: '🎵',
+  className: 'media-marker',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32]
+});
 
 let map;
 let userLat;
@@ -83,18 +96,33 @@ searchBtn.addEventListener('click', () => {
   const query = locationInput.value.trim();
   if (!query) return;
   searchStatus.textContent = '検索中...';
+  searchResults.innerHTML = '';
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
     .then(res => res.json())
     .then(data => {
       if (data.length > 0) {
-        selectedLat = parseFloat(data[0].lat);
-        selectedLng = parseFloat(data[0].lon);
-        searchStatus.textContent = data[0].display_name;
-        if (searchMarker) {
-          map.removeLayer(searchMarker);
-        }
-        searchMarker = L.marker([selectedLat, selectedLng]).addTo(map).bindPopup(data[0].display_name).openPopup();
-        map.setView([selectedLat, selectedLng], 15);
+        selectedLat = null;
+        selectedLng = null;
+        searchStatus.textContent = '検索結果を選択';
+        data.slice(0, 5).forEach(result => {
+          const li = document.createElement('li');
+          li.textContent = result.display_name;
+          li.addEventListener('click', () => {
+            selectedLat = parseFloat(result.lat);
+            selectedLng = parseFloat(result.lon);
+            searchStatus.textContent = `選択中: ${result.display_name}`;
+            if (searchMarker) {
+              map.removeLayer(searchMarker);
+            }
+            searchMarker = L.marker([selectedLat, selectedLng]).addTo(map).bindPopup(result.display_name).openPopup();
+            map.setView([selectedLat, selectedLng], 15);
+            for (const child of searchResults.children) {
+              child.classList.remove('selected');
+            }
+            li.classList.add('selected');
+          });
+          searchResults.appendChild(li);
+        });
       } else {
         searchStatus.textContent = '場所が見つかりません';
       }
@@ -124,32 +152,33 @@ if ('geolocation' in navigator) {
     artworks.forEach(a => {
       const icon = a.type === 'audio' ? audioIcon : imageIcon;
       const popupContent = `${a.title} ${a.type === 'audio' ? '🎵' : '🖼️'}`;
-      L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(popupContent);
+      const marker = L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(popupContent);
+      marker.on('click', () => showArtwork(a));
     });
-    displayNearby();
+    status.textContent = "近くのマーカーをクリックすると作品を閲覧できます。";
   }, showError);
 } else {
   status.textContent = "このブラウザは位置情報に対応していません。";
 }
 
-function displayNearby() {
-  const nearby = artworks.find(a => distanceMeters(userLat, userLng, a.lat, a.lng) < THRESHOLD_METERS);
-  if (nearby) {
+function showArtwork(art) {
+  const within = distanceMeters(userLat, userLng, art.lat, art.lng) < THRESHOLD_METERS;
+  if (within) {
     status.textContent = "ようこそ！";
-    artTitle.textContent = nearby.title;
-    if (nearby.type === 'audio') {
+    artTitle.textContent = art.title;
+    if (art.type === 'audio') {
       artImage.classList.add('hidden');
       artAudio.classList.remove('hidden');
-      artAudio.src = nearby.data;
+      artAudio.src = art.data;
     } else {
       artAudio.classList.add('hidden');
       artImage.classList.remove('hidden');
-      artImage.src = nearby.image || nearby.data;
+      artImage.src = art.image || art.data;
     }
-    artDescription.textContent = nearby.description || '';
+    artDescription.textContent = art.description || '';
     artworkDiv.classList.remove('hidden');
   } else {
-    status.textContent = "この場所では作品を閲覧できません。指定された地点に行ってください。";
+    status.textContent = "指定の地点に移動してから作品をご覧ください。";
     artworkDiv.classList.add('hidden');
   }
 }
@@ -183,8 +212,8 @@ document.getElementById('post-btn').addEventListener('click', () => {
     artworks.push(newArt);
     const icon = newArt.type === 'audio' ? audioIcon : imageIcon;
     const popupContent = `${newArt.title} ${newArt.type === 'audio' ? '🎵' : '🖼️'}`;
-    L.marker([newArt.lat, newArt.lng], { icon }).addTo(map).bindPopup(popupContent);
-    displayNearby();
+    const marker = L.marker([newArt.lat, newArt.lng], { icon }).addTo(map).bindPopup(popupContent);
+    marker.on('click', () => showArtwork(newArt));
     alert('投稿しました');
   };
   reader.readAsDataURL(file);

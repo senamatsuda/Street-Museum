@@ -35,8 +35,17 @@ img {
 
 .media-marker {
   font-size: 24px;
-  line-height: 24px;
+  width: 32px;
+  height: 32px;
   text-align: center;
+  border-radius: 50%;
+  background: transparent;
+  border: 2px solid rgba(128, 128, 128, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  outline: none;
 }
 
 @media (max-width: 600px) {
@@ -47,4 +56,19 @@ img {
   #map {
     height: 50vh;
   }
+}
+
+#search-results {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+#search-results li {
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+#search-results li.selected {
+  background: #e0e0e0;
 }
