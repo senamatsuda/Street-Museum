@@ -51,6 +51,10 @@ let selectedLat;
 let selectedLng;
 let searchMarker;
 
+function getMediaLabel(type) {
+  return type === 'audio' ? 'Audio' : 'Image';
+}
+
 function distanceMeters(lat1, lon1, lat2, lon2) {
   const R = 6371e3;
   const toRad = deg => deg * Math.PI / 180;
@@ -151,7 +155,7 @@ if ('geolocation' in navigator) {
     artworks = DEFAULT_ARTWORKS.concat(storedArtworks);
     artworks.forEach(a => {
       const icon = a.type === 'audio' ? audioIcon : imageIcon;
-      const popupContent = `${a.title} ${a.type === 'audio' ? '🎵' : '🖼️'}`;
+      const popupContent = `${getMediaLabel(a.type)}: ${a.title}`;
       const marker = L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(popupContent);
       marker.on('click', () => showArtwork(a));
     });
@@ -165,7 +169,7 @@ function showArtwork(art) {
   const within = distanceMeters(userLat, userLng, art.lat, art.lng) < THRESHOLD_METERS;
   if (within) {
     status.textContent = "ようこそ！";
-    artTitle.textContent = art.title;
+    artTitle.textContent = `${getMediaLabel(art.type)}: ${art.title}`;
     if (art.type === 'audio') {
       artImage.classList.add('hidden');
       artAudio.classList.remove('hidden');
@@ -211,7 +215,7 @@ document.getElementById('post-btn').addEventListener('click', () => {
     localStorage.setItem('userArtworks', JSON.stringify(stored));
     artworks.push(newArt);
     const icon = newArt.type === 'audio' ? audioIcon : imageIcon;
-    const popupContent = `${newArt.title} ${newArt.type === 'audio' ? '🎵' : '🖼️'}`;
+    const popupContent = `${getMediaLabel(newArt.type)}: ${newArt.title}`;
     const marker = L.marker([newArt.lat, newArt.lng], { icon }).addTo(map).bindPopup(popupContent);
     marker.on('click', () => showArtwork(newArt));
     alert('投稿しました');
