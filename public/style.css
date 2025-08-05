@@ -43,7 +43,7 @@ img {
   align-items: center;
   justify-content: center;
   border: 2px solid rgba(128, 128, 128, 0.5);
-  background-color: transparent;
+  background-color: solid rgba(255, 255, 255, 0.6);
 }
 
 @media (max-width: 600px) {
