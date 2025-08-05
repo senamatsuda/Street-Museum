@@ -33,6 +33,12 @@ img {
   margin: 1rem 0;
 }
 
+.media-marker {
+  font-size: 24px;
+  line-height: 24px;
+  text-align: center;
+}
+
 @media (max-width: 600px) {
   body {
     margin: 1rem;
