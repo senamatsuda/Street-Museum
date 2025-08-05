@@ -159,6 +159,30 @@ let selectedLng;
 let searchMarker;
 let userMarker;
 
+function initMap(lat, lng, showUserMarker = false) {
+  map = L.map('map').setView([lat, lng], 15);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  const storedArtworks = JSON.parse(localStorage.getItem('userArtworks') || '[]');
+  artworks = DEFAULT_ARTWORKS.concat(storedArtworks);
+  artworks.forEach(a => {
+    const icon = a.type === 'audio' ? audioIcon : imageIcon;
+    const marker = L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(getTitle(a));
+    a.marker = marker;
+    marker.on('click', () => showArtwork(a));
+  });
+  if (showUserMarker) {
+    userMarker = L.circleMarker([lat, lng], {
+      radius: 8,
+      color: 'red',
+      fillColor: 'red',
+      fillOpacity: 0.5
+    }).addTo(map).bindPopup(t('currentLocation')).openPopup();
+  }
+  setStatus('clickNearby');
+}
+
 function distanceMeters(lat1, lon1, lat2, lon2) {
   const R = 6371e3;
   const toRad = deg => deg * Math.PI / 180;
@@ -171,6 +195,10 @@ function distanceMeters(lat1, lon1, lat2, lon2) {
 
 function showError(err) {
   setStatus('unableToRetrieve', ' ' + err.message);
+  const def = DEFAULT_ARTWORKS[0];
+  userLat = def.lat;
+  userLng = def.lng;
+  initMap(def.lat, def.lng);
 }
 
 tabMap.addEventListener('click', () => {
@@ -245,28 +273,14 @@ if ('geolocation' in navigator) {
     const { latitude, longitude } = position.coords;
     userLat = latitude;
     userLng = longitude;
-    map = L.map('map').setView([latitude, longitude], 15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-    userMarker = L.circleMarker([latitude, longitude], {
-      radius: 8,
-      color: 'red',
-      fillColor: 'red',
-      fillOpacity: 0.5
-    }).addTo(map).bindPopup(t('currentLocation')).openPopup();
-    const storedArtworks = JSON.parse(localStorage.getItem('userArtworks') || '[]');
-    artworks = DEFAULT_ARTWORKS.concat(storedArtworks);
-    artworks.forEach(a => {
-      const icon = a.type === 'audio' ? audioIcon : imageIcon;
-      const marker = L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(getTitle(a));
-      a.marker = marker;
-      marker.on('click', () => showArtwork(a));
-    });
-    setStatus('clickNearby');
+    initMap(latitude, longitude, true);
   }, showError);
 } else {
+  const def = DEFAULT_ARTWORKS[0];
+  userLat = def.lat;
+  userLng = def.lng;
   setStatus('noLocationSupport');
+  initMap(def.lat, def.lng);
 }
 
 function showArtwork(art) {
