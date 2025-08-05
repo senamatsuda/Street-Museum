@@ -26,6 +26,7 @@ const searchBox = document.getElementById('search-box');
 const locationInput = document.getElementById('location-input');
 const searchBtn = document.getElementById('search-btn');
 const searchStatus = document.getElementById('search-status');
+const searchResults = document.getElementById('search-results');
 
 const imageIcon = L.divIcon({ html: '🖼️', className: 'media-marker', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -24] });
 const audioIcon = L.divIcon({ html: '🎵', className: 'media-marker', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -24] });
@@ -83,18 +84,33 @@ searchBtn.addEventListener('click', () => {
   const query = locationInput.value.trim();
   if (!query) return;
   searchStatus.textContent = '検索中...';
+  searchResults.innerHTML = '';
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
     .then(res => res.json())
     .then(data => {
       if (data.length > 0) {
-        selectedLat = parseFloat(data[0].lat);
-        selectedLng = parseFloat(data[0].lon);
-        searchStatus.textContent = data[0].display_name;
-        if (searchMarker) {
-          map.removeLayer(searchMarker);
-        }
-        searchMarker = L.marker([selectedLat, selectedLng]).addTo(map).bindPopup(data[0].display_name).openPopup();
-        map.setView([selectedLat, selectedLng], 15);
+        selectedLat = null;
+        selectedLng = null;
+        searchStatus.textContent = '検索結果を選択';
+        data.slice(0, 5).forEach(result => {
+          const li = document.createElement('li');
+          li.textContent = result.display_name;
+          li.addEventListener('click', () => {
+            selectedLat = parseFloat(result.lat);
+            selectedLng = parseFloat(result.lon);
+            searchStatus.textContent = `選択中: ${result.display_name}`;
+            if (searchMarker) {
+              map.removeLayer(searchMarker);
+            }
+            searchMarker = L.marker([selectedLat, selectedLng]).addTo(map).bindPopup(result.display_name).openPopup();
+            map.setView([selectedLat, selectedLng], 15);
+            for (const child of searchResults.children) {
+              child.classList.remove('selected');
+            }
+            li.classList.add('selected');
+          });
+          searchResults.appendChild(li);
+        });
       } else {
         searchStatus.textContent = '場所が見つかりません';
       }
