@@ -152,32 +152,33 @@ if ('geolocation' in navigator) {
     artworks.forEach(a => {
       const icon = a.type === 'audio' ? audioIcon : imageIcon;
       const popupContent = `${a.title} ${a.type === 'audio' ? '🎵' : '🖼️'}`;
-      L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(popupContent);
+      const marker = L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(popupContent);
+      marker.on('click', () => showArtwork(a));
     });
-    displayNearby();
+    status.textContent = "近くのマーカーをクリックすると作品を閲覧できます。";
   }, showError);
 } else {
   status.textContent = "このブラウザは位置情報に対応していません。";
 }
 
-function displayNearby() {
-  const nearby = artworks.find(a => distanceMeters(userLat, userLng, a.lat, a.lng) < THRESHOLD_METERS);
-  if (nearby) {
+function showArtwork(art) {
+  const within = distanceMeters(userLat, userLng, art.lat, art.lng) < THRESHOLD_METERS;
+  if (within) {
     status.textContent = "ようこそ！";
-    artTitle.textContent = nearby.title;
-    if (nearby.type === 'audio') {
+    artTitle.textContent = art.title;
+    if (art.type === 'audio') {
       artImage.classList.add('hidden');
       artAudio.classList.remove('hidden');
-      artAudio.src = nearby.data;
+      artAudio.src = art.data;
     } else {
       artAudio.classList.add('hidden');
       artImage.classList.remove('hidden');
-      artImage.src = nearby.image || nearby.data;
+      artImage.src = art.image || art.data;
     }
-    artDescription.textContent = nearby.description || '';
+    artDescription.textContent = art.description || '';
     artworkDiv.classList.remove('hidden');
   } else {
-    status.textContent = "この場所では作品を閲覧できません。指定された地点に行ってください。";
+    status.textContent = "指定の地点に移動してから作品をご覧ください。";
     artworkDiv.classList.add('hidden');
   }
 }
@@ -211,8 +212,8 @@ document.getElementById('post-btn').addEventListener('click', () => {
     artworks.push(newArt);
     const icon = newArt.type === 'audio' ? audioIcon : imageIcon;
     const popupContent = `${newArt.title} ${newArt.type === 'audio' ? '🎵' : '🖼️'}`;
-    L.marker([newArt.lat, newArt.lng], { icon }).addTo(map).bindPopup(popupContent);
-    displayNearby();
+    const marker = L.marker([newArt.lat, newArt.lng], { icon }).addTo(map).bindPopup(popupContent);
+    marker.on('click', () => showArtwork(newArt));
     alert('投稿しました');
   };
   reader.readAsDataURL(file);
