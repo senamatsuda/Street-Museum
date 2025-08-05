@@ -20,11 +20,19 @@ const mapSection = document.getElementById('map-section');
 const postSection = document.getElementById('post-section');
 const tabMap = document.getElementById('tab-map');
 const tabPost = document.getElementById('tab-post');
+const locModeInputs = document.getElementsByName('loc-mode');
+const searchBox = document.getElementById('search-box');
+const locationInput = document.getElementById('location-input');
+const searchBtn = document.getElementById('search-btn');
+const searchStatus = document.getElementById('search-status');
 
 let map;
 let userLat;
 let userLng;
 let artworks = [];
+let selectedLat;
+let selectedLng;
+let searchMarker;
 
 function distanceMeters(lat1, lon1, lat2, lon2) {
   const R = 6371e3;
@@ -55,6 +63,41 @@ tabPost.addEventListener('click', () => {
   postSection.classList.remove('hidden');
   tabPost.classList.add('active');
   tabMap.classList.remove('active');
+});
+
+for (const input of locModeInputs) {
+  input.addEventListener('change', () => {
+    if (document.querySelector('input[name="loc-mode"]:checked').value === 'search') {
+      searchBox.classList.remove('hidden');
+    } else {
+      searchBox.classList.add('hidden');
+    }
+  });
+}
+
+searchBtn.addEventListener('click', () => {
+  const query = locationInput.value.trim();
+  if (!query) return;
+  searchStatus.textContent = '検索中...';
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.length > 0) {
+        selectedLat = parseFloat(data[0].lat);
+        selectedLng = parseFloat(data[0].lon);
+        searchStatus.textContent = data[0].display_name;
+        if (searchMarker) {
+          map.removeLayer(searchMarker);
+        }
+        searchMarker = L.marker([selectedLat, selectedLng]).addTo(map).bindPopup(data[0].display_name).openPopup();
+        map.setView([selectedLat, selectedLng], 15);
+      } else {
+        searchStatus.textContent = '場所が見つかりません';
+      }
+    })
+    .catch(() => {
+      searchStatus.textContent = '検索エラー';
+    });
 });
 
 if ('geolocation' in navigator) {
@@ -108,13 +151,23 @@ function displayNearby() {
 document.getElementById('post-btn').addEventListener('click', () => {
   const title = document.getElementById('new-title').value.trim();
   const file = document.getElementById('new-file').files[0];
-  if (!title || !file || userLat == null) return;
+  const mode = document.querySelector('input[name="loc-mode"]:checked').value;
+  let lat;
+  let lng;
+  if (mode === 'current') {
+    lat = userLat;
+    lng = userLng;
+  } else {
+    lat = selectedLat;
+    lng = selectedLng;
+  }
+  if (!title || !file || lat == null || lng == null) return;
   const reader = new FileReader();
   reader.onload = () => {
     const newArt = {
       title,
-      lat: userLat,
-      lng: userLng,
+      lat,
+      lng,
       data: reader.result,
       type: file.type.startsWith('audio') ? 'audio' : 'image'
     };
