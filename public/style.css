@@ -2,15 +2,28 @@ body {
   font-family: sans-serif;
   margin: 2rem;
 }
+
 .hidden {
   display: none;
 }
+
 img {
   max-width: 100%;
   height: auto;
 }
 
 #map {
-  height: 400px;
+  height: 60vh;
+  min-height: 300px;
   margin: 1rem 0;
+}
+
+@media (max-width: 600px) {
+  body {
+    margin: 1rem;
+  }
+
+  #map {
+    height: 50vh;
+  }
 }
