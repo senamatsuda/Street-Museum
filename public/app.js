@@ -1,10 +1,117 @@
+const translations = {
+  ja: {
+    title: "街角ミュージアム",
+    map: "マップ",
+    post: "投稿",
+    postArtwork: "作品を投稿",
+    newTitlePlaceholder: "タイトル",
+    useCurrentLocation: "現在地を使用",
+    searchByPlace: "場所名で検索",
+    searchLocationPlaceholder: "場所を検索",
+    searchButton: "検索",
+    postButton: "投稿",
+    checkingLocation: "現在地を確認しています...",
+    selectResult: "検索結果を選択してください",
+    searching: "検索中...",
+    noLocationsFound: "場所が見つかりません",
+    searchError: "検索エラー",
+    clickNearby: "近くのマーカーをクリックすると作品を表示します。",
+    noLocationSupport: "このブラウザは位置情報取得をサポートしていません。",
+    unableToRetrieve: "位置情報を取得できません:",
+    currentLocation: "現在地",
+    welcome: "ようこそ！",
+    moveToView: "指定された場所に移動して作品を表示してください。",
+    postedSuccessfully: "投稿に成功しました"
+  },
+  en: {
+    title: "Street Museum",
+    map: "Map",
+    post: "Post",
+    postArtwork: "Post Artwork",
+    newTitlePlaceholder: "Title",
+    useCurrentLocation: "Use current location",
+    searchByPlace: "Search by place name",
+    searchLocationPlaceholder: "Search location",
+    searchButton: "Search",
+    postButton: "Post",
+    checkingLocation: "Checking current location...",
+    selectResult: "Select a result",
+    searching: "Searching...",
+    noLocationsFound: "No locations found",
+    searchError: "Search error",
+    clickNearby: "Click nearby markers to view artworks.",
+    noLocationSupport: "This browser does not support geolocation.",
+    unableToRetrieve: "Unable to retrieve location:",
+    currentLocation: "Current location",
+    welcome: "Welcome!",
+    moveToView: "Move to the specified location to view the artwork.",
+    postedSuccessfully: "Posted successfully"
+  }
+};
+
+let currentLang = 'ja';
+function t(key) {
+  return translations[currentLang][key];
+}
+
+function getTitle(a) {
+  return typeof a.title === 'string' ? a.title : (a.title[currentLang] || a.title.ja || a.title.en);
+}
+function getDescription(a) {
+  if (!a.description) return '';
+  return typeof a.description === 'string' ? a.description : (a.description[currentLang] || a.description.ja || a.description.en || '');
+}
+
+let currentStatusKey = 'checkingLocation';
+let currentStatusExtra = '';
+function setStatus(key, extra = '') {
+  currentStatusKey = key;
+  currentStatusExtra = extra;
+  status.textContent = t(key) + extra;
+}
+
+function updateTexts() {
+  document.documentElement.lang = currentLang;
+  document.title = t('title');
+  document.getElementById('title').textContent = t('title');
+  tabMap.textContent = t('map');
+  tabPost.textContent = t('post');
+  document.getElementById('post-artwork').textContent = t('postArtwork');
+  document.getElementById('new-title').placeholder = t('newTitlePlaceholder');
+  document.getElementById('label-use-current').textContent = t('useCurrentLocation');
+  document.getElementById('label-search-by-place').textContent = t('searchByPlace');
+  document.getElementById('location-input').placeholder = t('searchLocationPlaceholder');
+  searchBtn.textContent = t('searchButton');
+  document.getElementById('post-btn').textContent = t('postButton');
+  setStatus(currentStatusKey, currentStatusExtra);
+  if (userMarker) {
+    userMarker.bindPopup(t('currentLocation'));
+  }
+  artworks.forEach(a => {
+    if (a.marker) {
+      a.marker.bindPopup(getTitle(a));
+    }
+  });
+}
+
+document.getElementById('language-select').addEventListener('change', e => {
+  currentLang = e.target.value;
+  updateTexts();
+});
+
 const DEFAULT_ARTWORKS = [
   {
-    title: "Hiroshima University Central Library",
+    title: {
+      ja: "広島大学中央図書館",
+      en: "Hiroshima University Central Library"
+    },
     lat: 34.403244,
     lng: 132.713469,
     image: "higashihiroshima.jpeg",
-    description: "Central library at Hiroshima University's Higashihiroshima Campus.",
+    description: {
+      ja: "広島大学東広島キャンパスの中央図書館です。",
+      en: "Central library at Hiroshima University's Higashihiroshima Campus."
+    },
     type: 'image'
   }
 ];
@@ -50,6 +157,7 @@ let artworks = [];
 let selectedLat;
 let selectedLng;
 let searchMarker;
+let userMarker;
 
 function distanceMeters(lat1, lon1, lat2, lon2) {
   const R = 6371e3;
@@ -62,7 +170,7 @@ function distanceMeters(lat1, lon1, lat2, lon2) {
 }
 
 function showError(err) {
-  status.textContent = `Unable to retrieve location: ${err.message}`;
+  setStatus('unableToRetrieve', ' ' + err.message);
 }
 
 tabMap.addEventListener('click', () => {
@@ -95,7 +203,7 @@ for (const input of locModeInputs) {
 searchBtn.addEventListener('click', () => {
   const query = locationInput.value.trim();
   if (!query) return;
-  searchStatus.textContent = 'Searching...';
+  searchStatus.textContent = t('searching');
   searchResults.innerHTML = '';
   fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
     .then(res => res.json())
@@ -103,14 +211,14 @@ searchBtn.addEventListener('click', () => {
       if (data.length > 0) {
         selectedLat = null;
         selectedLng = null;
-        searchStatus.textContent = 'Select a result';
+        searchStatus.textContent = t('selectResult');
         data.slice(0, 5).forEach(result => {
           const li = document.createElement('li');
           li.textContent = result.display_name;
           li.addEventListener('click', () => {
             selectedLat = parseFloat(result.lat);
             selectedLng = parseFloat(result.lon);
-            searchStatus.textContent = `Selected: ${result.display_name}`;
+            searchStatus.textContent = `${t('selectResult')} ${result.display_name}`;
             if (searchMarker) {
               map.removeLayer(searchMarker);
             }
@@ -124,11 +232,11 @@ searchBtn.addEventListener('click', () => {
           searchResults.appendChild(li);
         });
       } else {
-        searchStatus.textContent = 'No locations found';
+        searchStatus.textContent = t('noLocationsFound');
       }
     })
     .catch(() => {
-      searchStatus.textContent = 'Search error';
+      searchStatus.textContent = t('searchError');
     });
 });
 
@@ -141,31 +249,31 @@ if ('geolocation' in navigator) {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
-    L.circleMarker([latitude, longitude], {
+    userMarker = L.circleMarker([latitude, longitude], {
       radius: 8,
       color: 'red',
       fillColor: 'red',
       fillOpacity: 0.5
-    }).addTo(map).bindPopup('Current location').openPopup();
+    }).addTo(map).bindPopup(t('currentLocation')).openPopup();
     const storedArtworks = JSON.parse(localStorage.getItem('userArtworks') || '[]');
     artworks = DEFAULT_ARTWORKS.concat(storedArtworks);
     artworks.forEach(a => {
       const icon = a.type === 'audio' ? audioIcon : imageIcon;
-      const popupContent = a.title;
-      const marker = L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(popupContent);
+      const marker = L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(getTitle(a));
+      a.marker = marker;
       marker.on('click', () => showArtwork(a));
     });
-    status.textContent = "Click nearby markers to view artworks.";
+    setStatus('clickNearby');
   }, showError);
 } else {
-  status.textContent = "This browser does not support geolocation.";
+  setStatus('noLocationSupport');
 }
 
 function showArtwork(art) {
   const within = distanceMeters(userLat, userLng, art.lat, art.lng) < THRESHOLD_METERS;
   if (within) {
-    status.textContent = "Welcome!";
-    artTitle.textContent = art.title;
+    setStatus('welcome');
+    artTitle.textContent = getTitle(art);
     if (art.type === 'audio') {
       artImage.classList.add('hidden');
       artAudio.classList.remove('hidden');
@@ -175,10 +283,10 @@ function showArtwork(art) {
       artImage.classList.remove('hidden');
       artImage.src = art.image || art.data;
     }
-    artDescription.textContent = art.description || '';
+    artDescription.textContent = getDescription(art);
     artworkDiv.classList.remove('hidden');
   } else {
-    status.textContent = "Move to the specified location to view the artwork.";
+    setStatus('moveToView');
     artworkDiv.classList.add('hidden');
   }
 }
@@ -211,10 +319,12 @@ document.getElementById('post-btn').addEventListener('click', () => {
     localStorage.setItem('userArtworks', JSON.stringify(stored));
     artworks.push(newArt);
     const icon = newArt.type === 'audio' ? audioIcon : imageIcon;
-    const popupContent = newArt.title;
-    const marker = L.marker([newArt.lat, newArt.lng], { icon }).addTo(map).bindPopup(popupContent);
+    const marker = L.marker([newArt.lat, newArt.lng], { icon }).addTo(map).bindPopup(getTitle(newArt));
+    newArt.marker = marker;
     marker.on('click', () => showArtwork(newArt));
-    alert('Posted successfully');
+    alert(t('postedSuccessfully'));
   };
   reader.readAsDataURL(file);
 });
+
+updateTexts();

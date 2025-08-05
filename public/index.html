@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Street Museum</title>
+  <title>街角ミュージアム</title>
   <link rel="stylesheet" href="style.css">
   <link
     rel="stylesheet"
@@ -11,14 +11,18 @@
   />
 </head>
 <body>
-  <h1>Street Museum</h1>
+  <h1 id="title">街角ミュージアム</h1>
+  <select id="language-select">
+    <option value="ja" selected>日本語</option>
+    <option value="en">English</option>
+  </select>
   <div class="tabs">
-    <button id="tab-map" class="active">Map</button>
-    <button id="tab-post">Post</button>
+    <button id="tab-map" class="active">マップ</button>
+    <button id="tab-post">投稿</button>
   </div>
 
   <div id="map-section">
-    <p id="status">Checking current location...</p>
+    <p id="status">現在地を確認しています...</p>
     <div id="map"></div>
     <div id="artwork" class="hidden">
       <h2 id="art-title"></h2>
@@ -29,21 +33,21 @@
   </div>
 
   <div id="post-section" class="hidden">
-    <h2>Post Artwork</h2>
+    <h2 id="post-artwork">作品を投稿</h2>
     <form id="post-form">
-      <input type="text" id="new-title" placeholder="Title">
+      <input type="text" id="new-title" placeholder="タイトル">
       <input type="file" id="new-file" accept="image/*,audio/*">
       <div class="location-options">
-        <label><input type="radio" name="loc-mode" value="current" checked> Use current location</label>
-        <label><input type="radio" name="loc-mode" value="search"> Search by place name</label>
+        <label><input type="radio" name="loc-mode" value="current" checked> <span id="label-use-current">現在地を使用</span></label>
+        <label><input type="radio" name="loc-mode" value="search"> <span id="label-search-by-place">場所名で検索</span></label>
       </div>
       <div id="search-box" class="hidden">
-        <input type="text" id="location-input" placeholder="Search location">
-        <button type="button" id="search-btn">Search</button>
+        <input type="text" id="location-input" placeholder="場所を検索">
+        <button type="button" id="search-btn">検索</button>
         <p id="search-status"></p>
         <ul id="search-results"></ul>
       </div>
-      <button type="button" id="post-btn">Post</button>
+      <button type="button" id="post-btn">投稿</button>
     </form>
   </div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
