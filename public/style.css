@@ -7,6 +7,21 @@ body {
   display: none;
 }
 
+.tabs {
+  margin-bottom: 1rem;
+}
+
+.tabs button {
+  padding: 0.5rem 1rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background: #333;
+  color: #fff;
+}
+
 img {
   max-width: 100%;
   height: auto;
