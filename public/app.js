@@ -1,8 +1,8 @@
 const artworks = [
   {
     title: "広島大学中央図書館",
-    lat: 34.4071,
-    lng: 132.7129,
+    lat: 34.403244, 
+    lng: 132.713469,
     image: "higashihiroshima.jpeg",
     description: "広島大学東広島キャンパスの中央図書館です。"
   }
