@@ -33,6 +33,15 @@
     <form id="post-form">
       <input type="text" id="new-title" placeholder="タイトル">
       <input type="file" id="new-file" accept="image/*,audio/*">
+      <div class="location-options">
+        <label><input type="radio" name="loc-mode" value="current" checked> 現在地を使用</label>
+        <label><input type="radio" name="loc-mode" value="search"> 場所名で検索</label>
+      </div>
+      <div id="search-box" class="hidden">
+        <input type="text" id="location-input" placeholder="場所を検索">
+        <button type="button" id="search-btn">検索</button>
+        <p id="search-status"></p>
+      </div>
       <button type="button" id="post-btn">投稿</button>
     </form>
   </div>
