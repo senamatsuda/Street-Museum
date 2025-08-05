@@ -16,6 +16,8 @@ const artTitle = document.getElementById('art-title');
 const artImage = document.getElementById('art-image');
 const artDescription = document.getElementById('art-description');
 
+let map;
+
 function distanceMeters(lat1, lon1, lat2, lon2) {
   const R = 6371e3;
   const toRad = deg => deg * Math.PI / 180;
@@ -33,6 +35,14 @@ function showError(err) {
 if ('geolocation' in navigator) {
   navigator.geolocation.getCurrentPosition(position => {
     const { latitude, longitude } = position.coords;
+    map = L.map('map').setView([latitude, longitude], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    L.marker([latitude, longitude]).addTo(map).bindPopup('現在地').openPopup();
+    artworks.forEach(a => {
+      L.marker([a.lat, a.lng]).addTo(map).bindPopup(a.title);
+    });
     const nearby = artworks.find(a => distanceMeters(latitude, longitude, a.lat, a.lng) < THRESHOLD_METERS);
     if (nearby) {
       status.textContent = "ようこそ！";
