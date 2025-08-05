@@ -16,8 +16,15 @@
   <div id="artwork" class="hidden">
     <h2 id="art-title"></h2>
     <img id="art-image" src="" alt="">
+    <audio id="art-audio" controls class="hidden"></audio>
     <p id="art-description"></p>
   </div>
+  <h2>作品を投稿</h2>
+  <form id="post-form">
+    <input type="text" id="new-title" placeholder="タイトル">
+    <input type="file" id="new-file" accept="image/*,audio/*">
+    <button type="button" id="post-btn">投稿</button>
+  </form>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="app.js"></script>
 </body>
