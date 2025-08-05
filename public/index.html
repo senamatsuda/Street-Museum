@@ -4,15 +4,21 @@
   <meta charset="UTF-8">
   <title>街角美術館</title>
   <link rel="stylesheet" href="style.css">
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"
+  />
 </head>
 <body>
   <h1>街角美術館</h1>
   <p id="status">現在位置を確認しています...</p>
+  <div id="map"></div>
   <div id="artwork" class="hidden">
     <h2 id="art-title"></h2>
     <img id="art-image" src="" alt="">
     <p id="art-description"></p>
   </div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
