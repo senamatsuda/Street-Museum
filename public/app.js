@@ -21,6 +21,7 @@ const translations = {
     currentLocation: "現在地",
     welcome: "ようこそ！",
     moveToView: "指定された場所に移動して作品を表示してください。",
+    explore: "探索モード",
     postedSuccessfully: "投稿に成功しました"
   },
   en: {
@@ -45,6 +46,7 @@ const translations = {
     currentLocation: "Current location",
     welcome: "Welcome!",
     moveToView: "Move to the specified location to view the artwork.",
+    explore: "Explore Mode",
     postedSuccessfully: "Posted successfully"
   }
 };
@@ -83,6 +85,7 @@ function updateTexts() {
   document.getElementById('location-input').placeholder = t('searchLocationPlaceholder');
   searchBtn.textContent = t('searchButton');
   document.getElementById('post-btn').textContent = t('postButton');
+  presenceToggle.textContent = artPresenceMode ? t('map') : t('explore');
   setStatus(currentStatusKey, currentStatusExtra);
   if (userMarker) {
     userMarker.bindPopup(t('currentLocation'));
@@ -134,6 +137,8 @@ const locationInput = document.getElementById('location-input');
 const searchBtn = document.getElementById('search-btn');
 const searchStatus = document.getElementById('search-status');
 const searchResults = document.getElementById('search-results');
+const presenceToggle = document.getElementById('presence-toggle');
+const arrow = document.getElementById('arrow');
 
 function createImageIcon(url) {
   return L.divIcon({
@@ -160,6 +165,8 @@ let selectedLat;
 let selectedLng;
 let searchMarker;
 let userMarker;
+let artPresenceMode = false;
+let currentPresenceTarget;
 
 window.addEventListener('resize', () => {
   if (map) {
@@ -192,6 +199,7 @@ function initMap(lat, lng, showUserMarker = false) {
   }
   setStatus('clickNearby');
   updateGlow();
+  updatePresence();
   // Ensure map tiles render correctly on initial load
   setTimeout(() => map.invalidateSize(), 0);
 }
@@ -217,6 +225,43 @@ function updateGlow() {
       }
     }
   });
+}
+
+function updatePresence() {
+  if (!artPresenceMode || userLat == null || userLng == null || artworks.length === 0) return;
+  let nearest = null;
+  let minDist = Infinity;
+  artworks.forEach(a => {
+    const d = distanceMeters(userLat, userLng, a.lat, a.lng);
+    if (d < minDist) {
+      minDist = d;
+      nearest = a;
+    }
+  });
+  if (!nearest) return;
+  currentPresenceTarget = nearest;
+  const angle = Math.atan2(nearest.lng - userLng, nearest.lat - userLat) * 180 / Math.PI;
+  arrow.style.transform = `rotate(${angle}deg)`;
+  artworkDiv.classList.remove('hidden');
+  artTitle.textContent = getTitle(nearest);
+  const ratio = Math.min(minDist / 200, 1);
+  if (nearest.type === 'audio') {
+    artImage.classList.add('hidden');
+    artAudio.classList.remove('hidden');
+    if (artAudio.src !== nearest.data) {
+      artAudio.src = nearest.data;
+      artAudio.loop = true;
+    }
+    artAudio.volume = 1 - ratio;
+    if (artAudio.paused) artAudio.play();
+  } else {
+    artAudio.classList.add('hidden');
+    artImage.classList.remove('hidden');
+    artImage.src = nearest.image || nearest.data;
+    const blur = 20 * ratio;
+    artImage.style.filter = `blur(${blur}px)`;
+  }
+  artDescription.textContent = minDist < THRESHOLD_METERS ? getDescription(nearest) : '';
 }
 
 function showError(err) {
@@ -253,6 +298,21 @@ for (const input of locModeInputs) {
     }
   });
 }
+
+presenceToggle.addEventListener('click', () => {
+  artPresenceMode = !artPresenceMode;
+  document.getElementById('map').classList.toggle('hidden', artPresenceMode);
+  arrow.classList.toggle('hidden', !artPresenceMode);
+  if (!artPresenceMode) {
+    artworkDiv.classList.add('hidden');
+    artImage.style.filter = '';
+    if (currentPresenceTarget && currentPresenceTarget.type === 'audio') {
+      artAudio.pause();
+    }
+  }
+  updateTexts();
+  updatePresence();
+});
 
 searchBtn.addEventListener('click', () => {
   const query = locationInput.value.trim();
@@ -308,6 +368,7 @@ if ('geolocation' in navigator) {
         userMarker.setLatLng([latitude, longitude]);
       }
       updateGlow();
+      updatePresence();
     }
   }, showError, { enableHighAccuracy: true });
 } else {
@@ -372,6 +433,7 @@ document.getElementById('post-btn').addEventListener('click', () => {
     newArt.marker = marker;
     marker.on('click', () => showArtwork(newArt));
     updateGlow();
+    updatePresence();
     alert(t('postedSuccessfully'));
   };
   reader.readAsDataURL(file);
