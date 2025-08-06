@@ -32,11 +32,11 @@
     </div>
   </div>
 
-  <div id="post-section" class="hidden">
-    <h2 id="post-artwork">作品を投稿</h2>
-    <form id="post-form">
-      <input type="text" id="new-title" placeholder="タイトル">
-      <input type="file" id="new-file" accept="image/*,audio/*">
+    <div id="post-section" class="hidden">
+      <h2 id="post-artwork">作品を投稿</h2>
+      <form id="post-form">
+        <input type="text" id="new-title" placeholder="タイトル">
+        <input type="file" id="new-file" accept="image/*,audio/*">
       <div class="location-options">
         <label><input type="radio" name="loc-mode" value="current" checked> <span id="label-use-current">現在地を使用</span></label>
         <label><input type="radio" name="loc-mode" value="search"> <span id="label-search-by-place">場所名で検索</span></label>
@@ -48,9 +48,18 @@
         <ul id="search-results"></ul>
       </div>
       <button type="button" id="post-btn">投稿</button>
-    </form>
-  </div>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="app.js"></script>
-</body>
+      </form>
+    </div>
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+      <filter id="sepia-filter">
+        <feColorMatrix type="matrix"
+          values="0.393 0.769 0.189 0 0
+                  0.349 0.686 0.168 0 0
+                  0.272 0.534 0.131 0 0
+                  0 0 0 1 0" />
+      </filter>
+    </svg>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+  </body>
 </html>

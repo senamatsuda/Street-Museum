@@ -170,7 +170,8 @@ function initMap(lat, lng, showUserMarker = false) {
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
     subdomains: 'abcd',
-    maxZoom: 19
+    maxZoom: 19,
+    opacity: 0.5
   }).addTo(map);
   const storedArtworks = JSON.parse(localStorage.getItem('userArtworks') || '[]');
   artworks = DEFAULT_ARTWORKS.concat(storedArtworks);
