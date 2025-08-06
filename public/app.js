@@ -72,7 +72,7 @@ function getArtworkId(a) {
 
 function loadSenses(a) {
   const all = JSON.parse(localStorage.getItem('artworkSenses') || '{}');
-  return all[getArtworkId(a)] || { sound: '', light: '', wind: '', smell: '', temperature: '' };
+  return all[getArtworkId(a)] || { sound: '', temperature: '', smell: '', weather: '' };
 }
 
 function storeSenses(a, senses) {
@@ -85,10 +85,9 @@ function populateSenses(a) {
   currentArtwork = a;
   const senses = loadSenses(a);
   senseInputs.sound.value = senses.sound || '';
-  senseInputs.light.value = senses.light || '';
-  senseInputs.wind.value = senses.wind || '';
-  senseInputs.smell.value = senses.smell || '';
   senseInputs.temperature.value = senses.temperature || '';
+  senseInputs.smell.value = senses.smell || '';
+  senseInputs.weather.value = senses.weather || '';
   sensesDiv.classList.remove('hidden');
 }
 
@@ -176,10 +175,9 @@ const arrow = document.getElementById('arrow');
 const sensesDiv = document.getElementById('senses');
 const senseInputs = {
   sound: document.getElementById('sense-sound'),
-  light: document.getElementById('sense-light'),
-  wind: document.getElementById('sense-wind'),
+  temperature: document.getElementById('sense-temp'),
   smell: document.getElementById('sense-smell'),
-  temperature: document.getElementById('sense-temp')
+  weather: document.getElementById('sense-weather')
 };
 const saveSensesBtn = document.getElementById('save-senses');
 
@@ -381,10 +379,9 @@ saveSensesBtn.addEventListener('click', () => {
   if (!currentArtwork) return;
   const senses = {
     sound: senseInputs.sound.value.trim(),
-    light: senseInputs.light.value.trim(),
-    wind: senseInputs.wind.value.trim(),
+    temperature: senseInputs.temperature.value.trim(),
     smell: senseInputs.smell.value.trim(),
-    temperature: senseInputs.temperature.value.trim()
+    weather: senseInputs.weather.value.trim()
   };
   storeSenses(currentArtwork, senses);
 });
