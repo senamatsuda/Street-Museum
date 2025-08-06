@@ -31,12 +31,10 @@ img {
   height: 60vh;
   min-height: 300px;
   margin: 1rem 0;
-  background: #f5f1e6;
 }
 
 #map .leaflet-tile-pane {
-  filter: url(#sepia-filter);
-  opacity: 0.5;
+  filter: sepia(80%);
 }
 
 .media-marker {
