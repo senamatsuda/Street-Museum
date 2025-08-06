@@ -159,6 +159,12 @@ let selectedLng;
 let searchMarker;
 let userMarker;
 
+window.addEventListener('resize', () => {
+  if (map) {
+    setTimeout(() => map.invalidateSize(), 0);
+  }
+});
+
 function initMap(lat, lng, showUserMarker = false) {
   map = L.map('map').setView([lat, lng], 15);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
