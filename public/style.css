@@ -33,10 +33,6 @@ img {
   margin: 1rem 0;
 }
 
-#map .leaflet-tile-pane {
-  filter: sepia(80%);
-}
-
 .media-marker {
   font-size: 24px;
   width: 32px;
