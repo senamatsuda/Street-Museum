@@ -135,19 +135,21 @@ const searchBtn = document.getElementById('search-btn');
 const searchStatus = document.getElementById('search-status');
 const searchResults = document.getElementById('search-results');
 
-const imageIcon = L.divIcon({
-  html: '🖼️',
-  className: 'media-marker',
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32]
-});
+function createImageIcon(url) {
+  return L.divIcon({
+    html: `<img src="${url}" />`,
+    className: 'thumb-marker',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40]
+  });
+}
 const audioIcon = L.divIcon({
-  html: '🎵',
-  className: 'media-marker',
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-  popupAnchor: [0, -32]
+  html: '<div class="thumb-audio">🎵</div>',
+  className: 'thumb-marker',
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+  popupAnchor: [0, -40]
 });
 
 let map;
@@ -175,7 +177,7 @@ function initMap(lat, lng, showUserMarker = false) {
   const storedArtworks = JSON.parse(localStorage.getItem('userArtworks') || '[]');
   artworks = DEFAULT_ARTWORKS.concat(storedArtworks);
   artworks.forEach(a => {
-    const icon = a.type === 'audio' ? audioIcon : imageIcon;
+    const icon = a.type === 'audio' ? audioIcon : createImageIcon(a.image || a.data);
     const marker = L.marker([a.lat, a.lng], { icon }).addTo(map).bindPopup(getTitle(a));
     a.marker = marker;
     marker.on('click', () => showArtwork(a));
@@ -189,6 +191,7 @@ function initMap(lat, lng, showUserMarker = false) {
     }).addTo(map).bindPopup(t('currentLocation')).openPopup();
   }
   setStatus('clickNearby');
+  updateGlow();
   // Ensure map tiles render correctly on initial load
   setTimeout(() => map.invalidateSize(), 0);
 }
@@ -201,6 +204,19 @@ function distanceMeters(lat1, lon1, lat2, lon2) {
   const a = Math.sin(dLat/2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon/2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
+}
+
+function updateGlow() {
+  artworks.forEach(a => {
+    if (a.marker) {
+      const el = a.marker.getElement();
+      if (el) {
+        const d = distanceMeters(userLat, userLng, a.lat, a.lng);
+        const intensity = Math.max(0, 1 - d / 200);
+        el.style.setProperty('--glow', intensity);
+      }
+    }
+  });
 }
 
 function showError(err) {
@@ -279,12 +295,21 @@ searchBtn.addEventListener('click', () => {
 });
 
 if ('geolocation' in navigator) {
-  navigator.geolocation.getCurrentPosition(position => {
+  let initialized = false;
+  navigator.geolocation.watchPosition(position => {
     const { latitude, longitude } = position.coords;
     userLat = latitude;
     userLng = longitude;
-    initMap(latitude, longitude, true);
-  }, showError);
+    if (!initialized) {
+      initMap(latitude, longitude, true);
+      initialized = true;
+    } else {
+      if (userMarker) {
+        userMarker.setLatLng([latitude, longitude]);
+      }
+      updateGlow();
+    }
+  }, showError, { enableHighAccuracy: true });
 } else {
   const def = DEFAULT_ARTWORKS[0];
   userLat = def.lat;
@@ -342,10 +367,11 @@ document.getElementById('post-btn').addEventListener('click', () => {
     stored.push(newArt);
     localStorage.setItem('userArtworks', JSON.stringify(stored));
     artworks.push(newArt);
-    const icon = newArt.type === 'audio' ? audioIcon : imageIcon;
+    const icon = newArt.type === 'audio' ? audioIcon : createImageIcon(newArt.data);
     const marker = L.marker([newArt.lat, newArt.lng], { icon }).addTo(map).bindPopup(getTitle(newArt));
     newArt.marker = marker;
     marker.on('click', () => showArtwork(newArt));
+    updateGlow();
     alert(t('postedSuccessfully'));
   };
   reader.readAsDataURL(file);
