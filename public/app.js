@@ -3,6 +3,7 @@ const translations = {
       title: "街角ミュージアム",
       map: "マップ",
       post: "投稿",
+      gallery: "ギャラリー",
       postArtwork: "作品を投稿",
       newTitlePlaceholder: "タイトル",
       useCurrentLocation: "現在地を使用",
@@ -38,6 +39,7 @@ const translations = {
       title: "Street Museum",
       map: "Map",
       post: "Post",
+      gallery: "Gallery",
       postArtwork: "Post Artwork",
       newTitlePlaceholder: "Title",
       useCurrentLocation: "Use current location",
@@ -98,6 +100,8 @@ function updateTexts() {
   document.getElementById('title').textContent = t('title');
   tabMap.textContent = t('map');
   tabPost.textContent = t('post');
+  tabGallery.textContent = t('gallery');
+  galleryHeading.textContent = t('gallery');
   document.getElementById('post-artwork').textContent = t('postArtwork');
   document.getElementById('new-title').placeholder = t('newTitlePlaceholder');
   document.getElementById('label-use-current').textContent = t('useCurrentLocation');
@@ -127,6 +131,7 @@ function updateTexts() {
     unlockWelcome.textContent = `${t('welcomeTo')} ${getTitle(activeOverlayArt)}`;
     unlockInside.textContent = t('insideArt');
   }
+  updateGallery();
 }
 
 document.getElementById('language-select').addEventListener('change', e => {
@@ -163,6 +168,10 @@ const mapSection = document.getElementById('map-section');
 const postSection = document.getElementById('post-section');
 const tabMap = document.getElementById('tab-map');
 const tabPost = document.getElementById('tab-post');
+const tabGallery = document.getElementById('tab-gallery');
+const gallerySection = document.getElementById('gallery-section');
+const galleryList = document.getElementById('gallery-list');
+const galleryHeading = document.getElementById('gallery-heading');
 const locModeInputs = document.getElementsByName('loc-mode');
 const searchBox = document.getElementById('search-box');
 const locationInput = document.getElementById('location-input');
@@ -217,6 +226,7 @@ let activeOverlayArt;
 let currentArtKey;
 let viewStartTime;
 let viewTime = 0;
+let journeyLine;
 
 function getArtKey(art) {
   return `${art.lat}:${art.lng}`;
@@ -242,13 +252,19 @@ function loadExperience() {
 
 function saveExperience() {
   if (!currentArtKey) return;
-  const data = JSON.parse(localStorage.getItem('experience-' + currentArtKey) || '{}');
+  const key = 'experience-' + currentArtKey;
+  const data = JSON.parse(localStorage.getItem(key) || '{}');
   data.senses = {};
   Object.keys(senseInputs).forEach(k => {
     data.senses[k] = senseInputs[k].value;
   });
   data.viewTime = viewTime;
-  localStorage.setItem('experience-' + currentArtKey, JSON.stringify(data));
+  if (!data.visitedAt) {
+    data.visitedAt = Date.now();
+  }
+  localStorage.setItem(key, JSON.stringify(data));
+  updateGallery();
+  updateJourneyLine();
 }
 
 function recordViewingTime() {
@@ -268,6 +284,8 @@ saveSensesBtn.addEventListener('click', () => {
 closeArtworkBtn.addEventListener('click', () => {
   recordViewingTime();
   artworkDiv.classList.add('hidden');
+  Object.values(senseInputs).forEach(i => i.disabled = false);
+  saveSensesBtn.classList.remove('hidden');
 });
 
 window.addEventListener('resize', () => {
@@ -302,6 +320,8 @@ function initMap(lat, lng, showUserMarker = false) {
   setStatus('clickNearby');
   updateGlow();
   updatePresence();
+  updateGallery();
+  updateJourneyLine();
   // Ensure map tiles render correctly on initial load
   setTimeout(() => map.invalidateSize(), 0);
 }
@@ -366,6 +386,80 @@ function updatePresence() {
   artDescription.textContent = minDist < THRESHOLD_METERS ? getDescription(nearest) : '';
 }
 
+function updateGallery() {
+  if (!galleryList) return;
+  galleryList.innerHTML = '';
+  artworks.forEach(a => {
+    const data = JSON.parse(localStorage.getItem('experience-' + getArtKey(a)) || '{}');
+    if (data.visitedAt) {
+      const card = document.createElement('div');
+      card.className = 'art-card';
+      let thumb;
+      if (a.type === 'audio') {
+        thumb = document.createElement('div');
+        thumb.className = 'thumb-audio';
+        thumb.textContent = '🎵';
+      } else {
+        thumb = document.createElement('img');
+        thumb.src = a.image || a.data;
+        thumb.alt = getTitle(a);
+      }
+      card.appendChild(thumb);
+      const title = document.createElement('h3');
+      title.textContent = getTitle(a);
+      card.appendChild(title);
+      const time = document.createElement('p');
+      time.textContent = formatViewingTime(data.viewTime || 0);
+      card.appendChild(time);
+      card.addEventListener('click', () => viewGalleryArt(a));
+      galleryList.appendChild(card);
+    }
+  });
+}
+
+function viewGalleryArt(art) {
+  recordViewingTime();
+  currentArtKey = getArtKey(art);
+  loadExperience();
+  artTitle.textContent = getTitle(art);
+  if (art.type === 'audio') {
+    artImage.classList.add('hidden');
+    artAudio.classList.remove('hidden');
+    artAudio.src = art.data;
+  } else {
+    artAudio.classList.add('hidden');
+    artImage.classList.remove('hidden');
+    artImage.src = art.image || art.data;
+  }
+  artDescription.textContent = getDescription(art);
+  artworkDiv.classList.remove('hidden');
+  Object.values(senseInputs).forEach(i => i.disabled = true);
+  saveSensesBtn.classList.add('hidden');
+}
+
+function updateJourneyLine() {
+  if (!map) return;
+  const visited = [];
+  artworks.forEach(a => {
+    const data = JSON.parse(localStorage.getItem('experience-' + getArtKey(a)) || '{}');
+    if (data.visitedAt) {
+      visited.push({ art: a, time: data.visitedAt });
+    }
+  });
+  visited.sort((a, b) => a.time - b.time);
+  const latlngs = visited.map(v => [v.art.lat, v.art.lng]);
+  if (journeyLine) {
+    if (latlngs.length > 0) {
+      journeyLine.setLatLngs(latlngs);
+    } else {
+      map.removeLayer(journeyLine);
+      journeyLine = null;
+    }
+  } else if (latlngs.length > 0) {
+    journeyLine = L.polyline(latlngs, { color: 'blue' }).addTo(map);
+  }
+}
+
 function showFullScreenArt(art) {
   unlockWelcome.textContent = `${t('welcomeTo')} ${getTitle(art)}`;
   unlockInside.textContent = t('insideArt');
@@ -415,8 +509,10 @@ function showError(err) {
 tabMap.addEventListener('click', () => {
   mapSection.classList.remove('hidden');
   postSection.classList.add('hidden');
+  gallerySection.classList.add('hidden');
   tabMap.classList.add('active');
   tabPost.classList.remove('active');
+  tabGallery.classList.remove('active');
   if (map) {
     setTimeout(() => map.invalidateSize(), 0);
   }
@@ -425,8 +521,19 @@ tabMap.addEventListener('click', () => {
 tabPost.addEventListener('click', () => {
   mapSection.classList.add('hidden');
   postSection.classList.remove('hidden');
+  gallerySection.classList.add('hidden');
   tabPost.classList.add('active');
   tabMap.classList.remove('active');
+  tabGallery.classList.remove('active');
+});
+
+tabGallery.addEventListener('click', () => {
+  mapSection.classList.add('hidden');
+  postSection.classList.add('hidden');
+  gallerySection.classList.remove('hidden');
+  tabGallery.classList.add('active');
+  tabMap.classList.remove('active');
+  tabPost.classList.remove('active');
 });
 
 for (const input of locModeInputs) {
@@ -524,6 +631,8 @@ if ('geolocation' in navigator) {
 
 function showArtwork(art) {
   recordViewingTime();
+  Object.values(senseInputs).forEach(i => i.disabled = false);
+  saveSensesBtn.classList.remove('hidden');
   const within = distanceMeters(userLat, userLng, art.lat, art.lng) < THRESHOLD_METERS;
   if (within) {
     currentArtKey = getArtKey(art);
