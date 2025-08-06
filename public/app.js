@@ -1,75 +1,59 @@
 const translations = {
-    ja: {
-      title: "街角ミュージアム",
-      map: "マップ",
-      post: "投稿",
-      postArtwork: "作品を投稿",
-      newTitlePlaceholder: "タイトル",
-      useCurrentLocation: "現在地を使用",
-      searchByPlace: "場所名で検索",
-      searchLocationPlaceholder: "場所を検索",
-      searchButton: "検索",
-      postButton: "投稿",
-      checkingLocation: "現在地を確認しています...",
-      selectResult: "検索結果を選択してください",
-      searching: "検索中...",
-      noLocationsFound: "場所が見つかりません",
-      searchError: "検索エラー",
-      clickNearby: "近くのマーカーをクリックすると作品を表示します。",
-      noLocationSupport: "このブラウザは位置情報取得をサポートしていません。",
-      unableToRetrieve: "位置情報を取得できません:",
-      currentLocation: "現在地",
-      welcome: "ようこそ！",
-      moveToView: "指定された場所に移動して作品を表示してください。",
-      explore: "探索モード",
-      postedSuccessfully: "投稿に成功しました",
-      welcomeTo: "\u3088\u3046\u3053\u305d",
-      insideArt: "\u3042\u306a\u305f\u306f\u4eca\u3001\u30a2\u30fc\u30c8\u306e\u4e2d\u306b\u3044\u307e\u3059",
-      sound: "音",
-      light: "光",
-      wind: "風",
-      smell: "匂い",
-      temperature: "温度",
-      save: "保存",
-      close: "閉じる",
-      viewingTime: "{x}分鑑賞"
-    },
-    en: {
-      title: "Street Museum",
-      map: "Map",
-      post: "Post",
-      postArtwork: "Post Artwork",
-      newTitlePlaceholder: "Title",
-      useCurrentLocation: "Use current location",
-      searchByPlace: "Search by place name",
-      searchLocationPlaceholder: "Search location",
-      searchButton: "Search",
-      postButton: "Post",
-      checkingLocation: "Checking current location...",
-      selectResult: "Select a result",
-      searching: "Searching...",
-      noLocationsFound: "No locations found",
-      searchError: "Search error",
-      clickNearby: "Click nearby markers to view artworks.",
-      noLocationSupport: "This browser does not support geolocation.",
-      unableToRetrieve: "Unable to retrieve location:",
-      currentLocation: "Current location",
-      welcome: "Welcome!",
-      moveToView: "Move to the specified location to view the artwork.",
-      explore: "Explore Mode",
-      postedSuccessfully: "Posted successfully",
-      welcomeTo: "Welcome to",
-      insideArt: "You are now inside the art",
-      sound: "Sound",
-      light: "Light",
-      wind: "Wind",
-      smell: "Smell",
-      temperature: "Temperature",
-      save: "Save",
-      close: "Close",
-      viewingTime: "{x} minutes of viewing"
-    }
-  };
+  ja: {
+    title: "街角ミュージアム",
+    map: "マップ",
+    post: "投稿",
+    postArtwork: "作品を投稿",
+    newTitlePlaceholder: "タイトル",
+    useCurrentLocation: "現在地を使用",
+    searchByPlace: "場所名で検索",
+    searchLocationPlaceholder: "場所を検索",
+    searchButton: "検索",
+    postButton: "投稿",
+    checkingLocation: "現在地を確認しています...",
+    selectResult: "検索結果を選択してください",
+    searching: "検索中...",
+    noLocationsFound: "場所が見つかりません",
+    searchError: "検索エラー",
+    clickNearby: "近くのマーカーをクリックすると作品を表示します。",
+    noLocationSupport: "このブラウザは位置情報取得をサポートしていません。",
+    unableToRetrieve: "位置情報を取得できません:",
+    currentLocation: "現在地",
+    welcome: "ようこそ！",
+    moveToView: "指定された場所に移動して作品を表示してください。",
+    explore: "探索モード",
+    postedSuccessfully: "投稿に成功しました",
+    welcomeTo: "\u3088\u3046\u3053\u305d",
+    insideArt: "\u3042\u306a\u305f\u306f\u4eca\u3001\u30a2\u30fc\u30c8\u306e\u4e2d\u306b\u3044\u307e\u3059"
+  },
+  en: {
+    title: "Street Museum",
+    map: "Map",
+    post: "Post",
+    postArtwork: "Post Artwork",
+    newTitlePlaceholder: "Title",
+    useCurrentLocation: "Use current location",
+    searchByPlace: "Search by place name",
+    searchLocationPlaceholder: "Search location",
+    searchButton: "Search",
+    postButton: "Post",
+    checkingLocation: "Checking current location...",
+    selectResult: "Select a result",
+    searching: "Searching...",
+    noLocationsFound: "No locations found",
+    searchError: "Search error",
+    clickNearby: "Click nearby markers to view artworks.",
+    noLocationSupport: "This browser does not support geolocation.",
+    unableToRetrieve: "Unable to retrieve location:",
+    currentLocation: "Current location",
+    welcome: "Welcome!",
+    moveToView: "Move to the specified location to view the artwork.",
+    explore: "Explore Mode",
+    postedSuccessfully: "Posted successfully",
+    welcomeTo: "Welcome to",
+    insideArt: "You are now inside the art"
+  }
+};
 
 let currentLang = 'ja';
 function t(key) {
@@ -105,14 +89,6 @@ function updateTexts() {
   document.getElementById('location-input').placeholder = t('searchLocationPlaceholder');
   searchBtn.textContent = t('searchButton');
   document.getElementById('post-btn').textContent = t('postButton');
-  document.getElementById('label-sound').textContent = t('sound');
-  document.getElementById('label-light').textContent = t('light');
-  document.getElementById('label-wind').textContent = t('wind');
-  document.getElementById('label-smell').textContent = t('smell');
-  document.getElementById('label-temperature').textContent = t('temperature');
-  saveSensesBtn.textContent = t('save');
-  closeArtworkBtn.textContent = t('close');
-  updateViewTimeDisplay();
   presenceToggle.textContent = artPresenceMode ? t('map') : t('explore');
   setStatus(currentStatusKey, currentStatusExtra);
   if (userMarker) {
@@ -175,16 +151,6 @@ const unlockOverlay = document.getElementById('unlock-overlay');
 const unlockImage = document.getElementById('unlock-image');
 const unlockWelcome = document.getElementById('unlock-welcome');
 const unlockInside = document.getElementById('unlock-inside');
-const senseInputs = {
-  sound: document.getElementById('sense-sound'),
-  light: document.getElementById('sense-light'),
-  wind: document.getElementById('sense-wind'),
-  smell: document.getElementById('sense-smell'),
-  temperature: document.getElementById('sense-temperature')
-};
-const saveSensesBtn = document.getElementById('save-senses');
-const viewingTimeDisplay = document.getElementById('viewing-time');
-const closeArtworkBtn = document.getElementById('close-artwork');
 
 function createImageIcon(url) {
   return L.divIcon({
@@ -214,61 +180,6 @@ let userMarker;
 let artPresenceMode = false;
 let currentPresenceTarget;
 let activeOverlayArt;
-let currentArtKey;
-let viewStartTime;
-let viewTime = 0;
-
-function getArtKey(art) {
-  return `${art.lat}:${art.lng}`;
-}
-
-function formatViewingTime(mins) {
-  return t('viewingTime').replace('{x}', Math.round(mins));
-}
-
-function updateViewTimeDisplay() {
-  viewingTimeDisplay.textContent = formatViewingTime(viewTime);
-}
-
-function loadExperience() {
-  const data = JSON.parse(localStorage.getItem('experience-' + currentArtKey) || '{}');
-  const senses = data.senses || {};
-  Object.keys(senseInputs).forEach(k => {
-    senseInputs[k].value = senses[k] || '';
-  });
-  viewTime = data.viewTime || 0;
-  updateViewTimeDisplay();
-}
-
-function saveExperience() {
-  if (!currentArtKey) return;
-  const data = JSON.parse(localStorage.getItem('experience-' + currentArtKey) || '{}');
-  data.senses = {};
-  Object.keys(senseInputs).forEach(k => {
-    data.senses[k] = senseInputs[k].value;
-  });
-  data.viewTime = viewTime;
-  localStorage.setItem('experience-' + currentArtKey, JSON.stringify(data));
-}
-
-function recordViewingTime() {
-  if (currentArtKey && viewStartTime) {
-    const elapsed = (Date.now() - viewStartTime) / 60000;
-    viewTime += elapsed;
-    viewStartTime = null;
-    saveExperience();
-    updateViewTimeDisplay();
-  }
-}
-
-saveSensesBtn.addEventListener('click', () => {
-  saveExperience();
-});
-
-closeArtworkBtn.addEventListener('click', () => {
-  recordViewingTime();
-  artworkDiv.classList.add('hidden');
-});
 
 window.addEventListener('resize', () => {
   if (map) {
@@ -444,7 +355,6 @@ presenceToggle.addEventListener('click', () => {
   document.getElementById('map').classList.toggle('hidden', artPresenceMode);
   arrow.classList.toggle('hidden', !artPresenceMode);
   if (!artPresenceMode) {
-    recordViewingTime();
     artworkDiv.classList.add('hidden');
     artImage.style.filter = '';
     if (currentPresenceTarget && currentPresenceTarget.type === 'audio') {
@@ -523,12 +433,8 @@ if ('geolocation' in navigator) {
 }
 
 function showArtwork(art) {
-  recordViewingTime();
   const within = distanceMeters(userLat, userLng, art.lat, art.lng) < THRESHOLD_METERS;
   if (within) {
-    currentArtKey = getArtKey(art);
-    loadExperience();
-    viewStartTime = Date.now();
     setStatus('welcome');
     artTitle.textContent = getTitle(art);
     if (art.type === 'audio') {
@@ -545,7 +451,6 @@ function showArtwork(art) {
   } else {
     setStatus('moveToView');
     artworkDiv.classList.add('hidden');
-    currentArtKey = null;
   }
 }
 
