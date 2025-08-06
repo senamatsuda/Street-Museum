@@ -33,6 +33,10 @@ img {
   margin: 1rem 0;
 }
 
+#map .leaflet-tile-pane {
+  filter: url(#sepia-tone) brightness(70%) contrast(90%);
+}
+
 .media-marker {
   font-size: 24px;
   width: 32px;
@@ -42,8 +46,13 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(128, 128, 128, 0.7);
-  background-color: solid rgba(255, 255, 255, 0.7);
+  border: 2px solid rgba(93, 64, 55, 0.8);
+  background-color: rgba(222, 203, 186, 0.8);
+  color: #5d4037;
+}
+
+.media-marker .marker-emoji {
+  filter: grayscale(80%) sepia(40%) brightness(80%);
 }
 
 @media (max-width: 600px) {

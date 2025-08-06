@@ -136,14 +136,14 @@ const searchStatus = document.getElementById('search-status');
 const searchResults = document.getElementById('search-results');
 
 const imageIcon = L.divIcon({
-  html: '🖼️',
+  html: '<span class="marker-emoji">🖼️</span>',
   className: 'media-marker',
   iconSize: [32, 32],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32]
 });
 const audioIcon = L.divIcon({
-  html: '🎵',
+  html: '<span class="marker-emoji">🎵</span>',
   className: 'media-marker',
   iconSize: [32, 32],
   iconAnchor: [16, 32],
@@ -167,8 +167,10 @@ window.addEventListener('resize', () => {
 
 function initMap(lat, lng, showUserMarker = false) {
   map = L.map('map').setView([lat, lng], 15);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 19
   }).addTo(map);
   const storedArtworks = JSON.parse(localStorage.getItem('userArtworks') || '[]');
   artworks = DEFAULT_ARTWORKS.concat(storedArtworks);
@@ -181,8 +183,8 @@ function initMap(lat, lng, showUserMarker = false) {
   if (showUserMarker) {
     userMarker = L.circleMarker([lat, lng], {
       radius: 8,
-      color: 'red',
-      fillColor: 'red',
+      color: '#5d4037',
+      fillColor: '#5d4037',
       fillOpacity: 0.5
     }).addTo(map).bindPopup(t('currentLocation')).openPopup();
   }
