@@ -66,6 +66,37 @@ function getDescription(a) {
   return typeof a.description === 'string' ? a.description : (a.description[currentLang] || a.description.ja || a.description.en || '');
 }
 
+function getArtworkId(a) {
+  return a.id || `${getTitle(a)}_${a.lat}_${a.lng}`;
+}
+
+function loadSenses(a) {
+  const all = JSON.parse(localStorage.getItem('artworkSenses') || '{}');
+  return all[getArtworkId(a)] || { sound: '', light: '', wind: '', smell: '', temperature: '' };
+}
+
+function storeSenses(a, senses) {
+  const all = JSON.parse(localStorage.getItem('artworkSenses') || '{}');
+  all[getArtworkId(a)] = senses;
+  localStorage.setItem('artworkSenses', JSON.stringify(all));
+}
+
+function populateSenses(a) {
+  currentArtwork = a;
+  const senses = loadSenses(a);
+  senseInputs.sound.value = senses.sound || '';
+  senseInputs.light.value = senses.light || '';
+  senseInputs.wind.value = senses.wind || '';
+  senseInputs.smell.value = senses.smell || '';
+  senseInputs.temperature.value = senses.temperature || '';
+  sensesDiv.classList.remove('hidden');
+}
+
+function hideSenses() {
+  sensesDiv.classList.add('hidden');
+  currentArtwork = null;
+}
+
 let currentStatusKey = 'checkingLocation';
 let currentStatusExtra = '';
 function setStatus(key, extra = '') {
@@ -106,6 +137,7 @@ document.getElementById('language-select').addEventListener('change', e => {
 
 const DEFAULT_ARTWORKS = [
   {
+    id: 'hiroshima-library',
     title: {
       ja: "広島大学中央図書館",
       en: "Hiroshima University Central Library"
@@ -141,6 +173,15 @@ const searchStatus = document.getElementById('search-status');
 const searchResults = document.getElementById('search-results');
 const presenceToggle = document.getElementById('presence-toggle');
 const arrow = document.getElementById('arrow');
+const sensesDiv = document.getElementById('senses');
+const senseInputs = {
+  sound: document.getElementById('sense-sound'),
+  light: document.getElementById('sense-light'),
+  wind: document.getElementById('sense-wind'),
+  smell: document.getElementById('sense-smell'),
+  temperature: document.getElementById('sense-temp')
+};
+const saveSensesBtn = document.getElementById('save-senses');
 
 function createImageIcon(url) {
   return L.divIcon({
@@ -169,6 +210,7 @@ let searchMarker;
 let userMarker;
 let artPresenceMode = false;
 let currentPresenceTarget;
+let currentArtwork;
 
 window.addEventListener('resize', () => {
   if (map) {
@@ -277,6 +319,11 @@ function updatePresence() {
     artImage.style.filter = blur ? `blur(${blur}px)` : 'none';
   }
   artDescription.textContent = within ? getDescription(nearest) : '';
+  if (within) {
+    populateSenses(nearest);
+  } else {
+    hideSenses();
+  }
 }
 
 function showError(err) {
@@ -324,9 +371,22 @@ presenceToggle.addEventListener('click', () => {
     if (currentPresenceTarget && currentPresenceTarget.type === 'audio') {
       artAudio.pause();
     }
+    hideSenses();
   }
   updateTexts();
   updatePresence();
+});
+
+saveSensesBtn.addEventListener('click', () => {
+  if (!currentArtwork) return;
+  const senses = {
+    sound: senseInputs.sound.value.trim(),
+    light: senseInputs.light.value.trim(),
+    wind: senseInputs.wind.value.trim(),
+    smell: senseInputs.smell.value.trim(),
+    temperature: senseInputs.temperature.value.trim()
+  };
+  storeSenses(currentArtwork, senses);
 });
 
 searchBtn.addEventListener('click', () => {
@@ -409,10 +469,12 @@ function showArtwork(art) {
       artImage.src = art.image || art.data;
     }
     artDescription.textContent = getDescription(art);
+    populateSenses(art);
     artworkDiv.classList.remove('hidden');
   } else {
     setStatus('moveToView');
     artworkDiv.classList.add('hidden');
+    hideSenses();
   }
 }
 
@@ -433,6 +495,7 @@ document.getElementById('post-btn').addEventListener('click', () => {
   const reader = new FileReader();
   reader.onload = () => {
     const newArt = {
+      id: Date.now().toString(),
       title,
       lat,
       lng,
