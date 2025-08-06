@@ -34,6 +34,7 @@ img {
 }
 
 #map .leaflet-tile-pane {
+  /* Sepia tone with reduced brightness and contrast for a calm canvas */
   filter: url(#sepia-tone) brightness(70%) contrast(90%);
 }
 
