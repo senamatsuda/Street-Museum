@@ -112,3 +112,13 @@ img {
   background: #e0e0e0;
 }
 
+#arrow {
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 40px solid red;
+  margin: 1rem auto;
+  transition: transform 0.2s linear;
+}
+
