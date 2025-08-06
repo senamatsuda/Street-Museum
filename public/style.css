@@ -126,3 +126,12 @@ img {
   border-bottom-color: green;
 }
 
+#senses label {
+  display: block;
+  margin: 0.25rem 0;
+}
+
+#senses input {
+  width: 100%;
+}
+
