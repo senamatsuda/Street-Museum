@@ -167,8 +167,10 @@ window.addEventListener('resize', () => {
 
 function initMap(lat, lng, showUserMarker = false) {
   map = L.map('map').setView([lat, lng], 15);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+    maxZoom: 19,
+    opacity: 0.6
   }).addTo(map);
   const storedArtworks = JSON.parse(localStorage.getItem('userArtworks') || '[]');
   artworks = DEFAULT_ARTWORKS.concat(storedArtworks);

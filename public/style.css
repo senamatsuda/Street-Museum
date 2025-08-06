@@ -33,6 +33,10 @@ img {
   margin: 1rem 0;
 }
 
+.leaflet-tile {
+  filter: url(#sepia) brightness(0.8);
+}
+
 .media-marker {
   font-size: 24px;
   width: 32px;
@@ -42,8 +46,8 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(128, 128, 128, 0.7);
-  background-color: solid rgba(255, 255, 255, 0.7);
+  border: 2px solid rgba(80, 80, 80, 0.7);
+  background-color: rgba(230, 230, 230, 0.7);
 }
 
 @media (max-width: 600px) {
