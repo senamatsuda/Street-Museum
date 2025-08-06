@@ -21,7 +21,7 @@ const translations = {
     currentLocation: "現在地",
     welcome: "ようこそ！",
     moveToView: "指定された場所に移動して作品を表示してください。",
-    explore: "探索モード",
+    presence: "アート気配モード",
     postedSuccessfully: "投稿に成功しました"
   },
   en: {
@@ -46,7 +46,7 @@ const translations = {
     currentLocation: "Current location",
     welcome: "Welcome!",
     moveToView: "Move to the specified location to view the artwork.",
-    explore: "Explore Mode",
+    presence: "Art Presence",
     postedSuccessfully: "Posted successfully"
   }
 };
@@ -85,7 +85,7 @@ function updateTexts() {
   document.getElementById('location-input').placeholder = t('searchLocationPlaceholder');
   searchBtn.textContent = t('searchButton');
   document.getElementById('post-btn').textContent = t('postButton');
-  presenceToggle.textContent = artPresenceMode ? t('map') : t('explore');
+  presenceToggle.textContent = artPresenceMode ? t('map') : t('presence');
   setStatus(currentStatusKey, currentStatusExtra);
   if (userMarker) {
     userMarker.bindPopup(t('currentLocation'));
@@ -214,6 +214,16 @@ function distanceMeters(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
+function bearingTo(lat1, lon1, lat2, lon2) {
+  const toRad = deg => deg * Math.PI / 180;
+  const φ1 = toRad(lat1);
+  const φ2 = toRad(lat2);
+  const Δλ = toRad(lon2 - lon1);
+  const y = Math.sin(Δλ) * Math.cos(φ2);
+  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+
 function updateGlow() {
   artworks.forEach(a => {
     if (a.marker) {
@@ -240,7 +250,7 @@ function updatePresence() {
   });
   if (!nearest) return;
   currentPresenceTarget = nearest;
-  const angle = Math.atan2(nearest.lng - userLng, nearest.lat - userLat) * 180 / Math.PI;
+  const angle = bearingTo(userLat, userLng, nearest.lat, nearest.lng);
   arrow.style.transform = `rotate(${angle}deg)`;
   artworkDiv.classList.remove('hidden');
   artTitle.textContent = getTitle(nearest);
