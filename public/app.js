@@ -22,6 +22,7 @@ const translations = {
     welcome: "ようこそ！",
     moveToView: "指定された場所に移動して作品を表示してください。",
     presence: "アート気配モード",
+    inRange: "50m以内です！",
     postedSuccessfully: "投稿に成功しました"
   },
   en: {
@@ -47,6 +48,7 @@ const translations = {
     welcome: "Welcome!",
     moveToView: "Move to the specified location to view the artwork.",
     presence: "Art Presence",
+    inRange: "Within 50m!",
     postedSuccessfully: "Posted successfully"
   }
 };
@@ -249,6 +251,9 @@ function updatePresence() {
     }
   });
   if (!nearest) return;
+  const within = minDist < THRESHOLD_METERS;
+  arrow.classList.toggle('in-range', within);
+  setStatus(within ? 'inRange' : 'moveToView');
   currentPresenceTarget = nearest;
   const angle = bearingTo(userLat, userLng, nearest.lat, nearest.lng);
   arrow.style.transform = `rotate(${angle}deg)`;
@@ -268,10 +273,10 @@ function updatePresence() {
     artAudio.classList.add('hidden');
     artImage.classList.remove('hidden');
     artImage.src = nearest.image || nearest.data;
-    const blur = 20 * ratio;
-    artImage.style.filter = `blur(${blur}px)`;
+    const blur = within ? 0 : 20 * ratio;
+    artImage.style.filter = blur ? `blur(${blur}px)` : 'none';
   }
-  artDescription.textContent = minDist < THRESHOLD_METERS ? getDescription(nearest) : '';
+  artDescription.textContent = within ? getDescription(nearest) : '';
 }
 
 function showError(err) {

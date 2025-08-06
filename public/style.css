@@ -122,3 +122,7 @@ img {
   transition: transform 0.2s linear;
 }
 
+#arrow.in-range {
+  border-bottom-color: green;
+}
+
