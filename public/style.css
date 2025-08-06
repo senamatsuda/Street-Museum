@@ -153,12 +153,7 @@ img {
   z-index: -1;
 }
 
-  #unlock-text {
-    text-align: center;
-  }
-
-#senses label {
-  display: block;
-  margin: 0.5rem 0;
+#unlock-text {
+  text-align: center;
 }
 
