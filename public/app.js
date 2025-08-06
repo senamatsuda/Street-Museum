@@ -22,9 +22,7 @@ const translations = {
     welcome: "ようこそ！",
     moveToView: "指定された場所に移動して作品を表示してください。",
     explore: "探索モード",
-    postedSuccessfully: "投稿に成功しました",
-    welcomeTo: "\u3088\u3046\u3053\u305d",
-    insideArt: "\u3042\u306a\u305f\u306f\u4eca\u3001\u30a2\u30fc\u30c8\u306e\u4e2d\u306b\u3044\u307e\u3059"
+    postedSuccessfully: "投稿に成功しました"
   },
   en: {
     title: "Street Museum",
@@ -49,9 +47,7 @@ const translations = {
     welcome: "Welcome!",
     moveToView: "Move to the specified location to view the artwork.",
     explore: "Explore Mode",
-    postedSuccessfully: "Posted successfully",
-    welcomeTo: "Welcome to",
-    insideArt: "You are now inside the art"
+    postedSuccessfully: "Posted successfully"
   }
 };
 
@@ -99,10 +95,6 @@ function updateTexts() {
       a.marker.bindPopup(getTitle(a));
     }
   });
-  if (activeOverlayArt) {
-    unlockWelcome.textContent = `${t('welcomeTo')} ${getTitle(activeOverlayArt)}`;
-    unlockInside.textContent = t('insideArt');
-  }
 }
 
 document.getElementById('language-select').addEventListener('change', e => {
@@ -147,10 +139,6 @@ const searchStatus = document.getElementById('search-status');
 const searchResults = document.getElementById('search-results');
 const presenceToggle = document.getElementById('presence-toggle');
 const arrow = document.getElementById('arrow');
-const unlockOverlay = document.getElementById('unlock-overlay');
-const unlockImage = document.getElementById('unlock-image');
-const unlockWelcome = document.getElementById('unlock-welcome');
-const unlockInside = document.getElementById('unlock-inside');
 
 function createImageIcon(url) {
   return L.divIcon({
@@ -179,7 +167,6 @@ let searchMarker;
 let userMarker;
 let artPresenceMode = false;
 let currentPresenceTarget;
-let activeOverlayArt;
 
 window.addEventListener('resize', () => {
   if (map) {
@@ -275,44 +262,6 @@ function updatePresence() {
     artImage.style.filter = `blur(${blur}px)`;
   }
   artDescription.textContent = minDist < THRESHOLD_METERS ? getDescription(nearest) : '';
-}
-
-function showFullScreenArt(art) {
-  unlockWelcome.textContent = `${t('welcomeTo')} ${getTitle(art)}`;
-  unlockInside.textContent = t('insideArt');
-  if (art.type === 'audio') {
-    unlockImage.classList.add('hidden');
-  } else {
-    unlockImage.classList.remove('hidden');
-    unlockImage.src = art.image || art.data;
-  }
-  unlockOverlay.classList.remove('hidden');
-  requestAnimationFrame(() => unlockOverlay.classList.add('show'));
-}
-
-function hideFullScreenArt() {
-  unlockOverlay.classList.remove('show');
-  setTimeout(() => {
-    unlockOverlay.classList.add('hidden');
-  }, 1000);
-}
-
-function checkUnlocked() {
-  if (userLat == null || userLng == null) return;
-  let found = null;
-  artworks.forEach(a => {
-    const d = distanceMeters(userLat, userLng, a.lat, a.lng);
-    if (d < THRESHOLD_METERS) {
-      found = a;
-    }
-  });
-  if (found && activeOverlayArt !== found) {
-    activeOverlayArt = found;
-    showFullScreenArt(found);
-  } else if (!found && activeOverlayArt) {
-    hideFullScreenArt();
-    activeOverlayArt = null;
-  }
 }
 
 function showError(err) {
@@ -421,7 +370,6 @@ if ('geolocation' in navigator) {
       updateGlow();
       updatePresence();
     }
-    checkUnlocked();
   }, showError, { enableHighAccuracy: true });
 } else {
   const def = DEFAULT_ARTWORKS[0];
@@ -429,7 +377,6 @@ if ('geolocation' in navigator) {
   userLng = def.lng;
   setStatus('noLocationSupport');
   initMap(def.lat, def.lng);
-  checkUnlocked();
 }
 
 function showArtwork(art) {

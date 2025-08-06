@@ -122,38 +122,3 @@ img {
   transition: transform 0.2s linear;
 }
 
-#unlock-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  background: rgba(0, 0, 0, 0.9);
-  color: #fff;
-  z-index: 1000;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-
-#unlock-overlay.show {
-  opacity: 1;
-}
-
-#unlock-overlay img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
-}
-
-#unlock-text {
-  text-align: center;
-}
-
