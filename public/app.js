@@ -66,14 +66,6 @@ function getDescription(a) {
   return typeof a.description === 'string' ? a.description : (a.description[currentLang] || a.description.ja || a.description.en || '');
 }
 
-function getWelcomeMessage(title) {
-  return currentLang === 'ja' ? `${title}へようこそ` : `Welcome to ${title}`;
-}
-
-function getEnjoyMessage(title) {
-  return currentLang === 'ja' ? `${title}を五感でお楽しみください` : `Enjoy ${title} with all of your senses`;
-}
-
 let currentStatusKey = 'checkingLocation';
 let currentStatusExtra = '';
 function setStatus(key, extra = '') {
@@ -134,8 +126,6 @@ const THRESHOLD_METERS = 50; // display within 50m
 const status = document.getElementById('status');
 const artworkDiv = document.getElementById('artwork');
 const artTitle = document.getElementById('art-title');
-const artMessage = document.getElementById('art-message');
-const artClose = document.getElementById('art-close');
 const artImage = document.getElementById('art-image');
 const artAudio = document.getElementById('art-audio');
 const artDescription = document.getElementById('art-description');
@@ -268,9 +258,7 @@ function updatePresence() {
   const angle = bearingTo(userLat, userLng, nearest.lat, nearest.lng);
   arrow.style.transform = `rotate(${angle}deg)`;
   artworkDiv.classList.remove('hidden');
-  artworkDiv.classList.add('show');
   artTitle.textContent = getTitle(nearest);
-  artMessage.textContent = '';
   const ratio = Math.min(minDist / 200, 1);
   if (nearest.type === 'audio') {
     artImage.classList.add('hidden');
@@ -331,7 +319,6 @@ presenceToggle.addEventListener('click', () => {
   document.getElementById('map').classList.toggle('hidden', artPresenceMode);
   arrow.classList.toggle('hidden', !artPresenceMode);
   if (!artPresenceMode) {
-    artworkDiv.classList.remove('show');
     artworkDiv.classList.add('hidden');
     artImage.style.filter = '';
     if (currentPresenceTarget && currentPresenceTarget.type === 'audio') {
@@ -340,16 +327,6 @@ presenceToggle.addEventListener('click', () => {
   }
   updateTexts();
   updatePresence();
-});
-
-artClose.addEventListener('click', () => {
-  artworkDiv.classList.remove('show');
-  setTimeout(() => {
-    artworkDiv.classList.add('hidden');
-    if (!artAudio.classList.contains('hidden')) {
-      artAudio.pause();
-    }
-  }, 500);
 });
 
 searchBtn.addEventListener('click', () => {
@@ -421,9 +398,7 @@ function showArtwork(art) {
   const within = distanceMeters(userLat, userLng, art.lat, art.lng) < THRESHOLD_METERS;
   if (within) {
     setStatus('welcome');
-    const title = getTitle(art);
-    artTitle.textContent = getWelcomeMessage(title);
-    artMessage.textContent = getEnjoyMessage(title);
+    artTitle.textContent = getTitle(art);
     if (art.type === 'audio') {
       artImage.classList.add('hidden');
       artAudio.classList.remove('hidden');
@@ -435,10 +410,8 @@ function showArtwork(art) {
     }
     artDescription.textContent = getDescription(art);
     artworkDiv.classList.remove('hidden');
-    requestAnimationFrame(() => artworkDiv.classList.add('show'));
   } else {
     setStatus('moveToView');
-    artworkDiv.classList.remove('show');
     artworkDiv.classList.add('hidden');
   }
 }
