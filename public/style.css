@@ -34,7 +34,7 @@ img {
 }
 
 #map .leaflet-tile-pane {
-  filter: sepia(80%);
+  filter: url(#sepia-filter);
 }
 
 .media-marker {
