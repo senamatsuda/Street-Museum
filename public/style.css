@@ -33,10 +33,6 @@ img {
   margin: 1rem 0;
 }
 
-.leaflet-tile {
-  filter: url(#sepia);
-}
-
 .media-marker {
   font-size: 24px;
   width: 32px;
