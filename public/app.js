@@ -276,7 +276,7 @@ function updateGlow() {
       const el = a.marker.getElement();
       if (el) {
         const d = distanceMeters(userLat, userLng, a.lat, a.lng);
-        const intensity = Math.max(0, 1 - d / 200);
+        const intensity = Math.max(0, 1 - d / (THRESHOLD_METERS * 2));
         el.style.setProperty('--glow', intensity);
       }
     }
@@ -300,7 +300,7 @@ function updatePresence() {
   arrow.style.transform = `rotate(${angle}deg)`;
   artworkDiv.classList.remove('hidden');
   artTitle.textContent = getTitle(nearest);
-  const ratio = Math.min(minDist / 200, 1);
+  const ratio = Math.min(minDist / (THRESHOLD_METERS * 2), 1);
   if (nearest.type === 'audio') {
     artImage.classList.add('hidden');
     artAudio.classList.remove('hidden');
