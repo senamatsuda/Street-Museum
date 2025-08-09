@@ -112,6 +112,17 @@ img {
   #map {
     height: 50vh;
   }
+
+  .tabs button {
+    display: block;
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .tabs button:last-child {
+    margin-bottom: 0;
+  }
 }
 
 #search-results {
