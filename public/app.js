@@ -212,7 +212,7 @@ const arrow = document.getElementById('arrow');
 
 function createImageIcon(url) {
   return L.divIcon({
-    html: `<img src="${url}" />`,
+    html: `<div class="thumb-image" style="background-image:url('${url}')"></div>`,
     className: 'thumb-marker',
     iconSize: [40, 40],
     iconAnchor: [20, 40],

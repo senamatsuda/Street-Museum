@@ -64,11 +64,16 @@ img {
   animation: pulse 2s infinite;
 }
 
-.thumb-marker img,
+.thumb-marker .thumb-image,
 .thumb-marker .thumb-audio {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.thumb-marker .thumb-image {
+  background-size: cover;
+  background-position: center;
 }
 
 .thumb-marker .thumb-audio {
