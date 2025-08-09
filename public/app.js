@@ -120,70 +120,70 @@ const DEFAULT_ARTWORKS = [
   {
     title: {
       ja: "spring",
-      en: "spring"
+      en: "春"
     },
-    lat: 0,
-    lng: 0,
+    lat: 34.398520,
+    lng: 132.712508,
     image: "spring.jpeg",
     description: {
-      ja: "",
-      en: ""
+      ja: "広島大学の思案橋で見た桜。春を感じた。",
+      en: "Cherry blossom that I saw by Shian Bridge in Hiroshima University. Felt the spring coming."
     },
     type: 'image'
   },
   {
     title: {
-      ja: "watermelon",
+      ja: "スイカ",
       en: "watermelon"
     },
-    lat: 0,
-    lng: 0,
+    lat: 34.403622,
+    lng: 132.7086244,
     image: "watermelon.jpeg",
     description: {
-      ja: "",
-      en: ""
+      ja: "研究室でスイカを食べた。夏だなぁ",
+      en: "Eat watermelon in the lab. So much like summer."
     },
     type: 'image'
   },
   {
     title: {
-      ja: "cherry blossom",
+      ja: "桜",
       en: "cherry blossom"
     },
-    lat: 0,
-    lng: 0,
+    lat: 34.396310, 
+    lng: 132.711532,
     image: "cherry-blossom.jpeg",
     description: {
-      ja: "",
-      en: ""
+      ja: "おそらく広島大学1番の桜並木",
+      en: "Probably the best cheery blossoms in Hiroshima University"
     },
     type: 'image'
   },
   {
     title: {
-      ja: "firework",
+      ja: "花火",
       en: "firework"
     },
-    lat: 0,
-    lng: 0,
+    lat: 34.4000301,
+    lng: 132.7113058,
     image: "firework.jpeg",
     description: {
-      ja: "",
-      en: ""
+      ja: "ゆかた祭りの花火",
+      en: "Fireworks from the Yukata"
     },
     type: 'image'
   },
   {
     title: {
-      ja: "rainbow",
+      ja: "虹",
       en: "rainbow"
     },
-    lat: 0,
-    lng: 0,
+    lat: 34.402260, 
+    lng: 132.712340,
     image: "rainbow.jpeg",
     description: {
-      ja: "",
-      en: ""
+      ja: "帰り道の虹。いいことあるかな",
+      en: "A rainbow I saw on my way home. Maybe something good will happen"
     },
     type: 'image'
   }
