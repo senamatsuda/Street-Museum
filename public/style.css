@@ -36,6 +36,7 @@ body {
 }
 
 .hidden { display: none; }
+#map.hidden { display: none; }
 
 /* タブ：折り返し可能にしてはみ出しを根絶 */
 .tabs {
