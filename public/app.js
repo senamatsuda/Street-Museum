@@ -175,7 +175,7 @@ const DEFAULT_ARTWORKS = [
   }
 ];
 
-const THRESHOLD_METERS = 50; // display within 50m
+const THRESHOLD_METERS = 100; // display within 100m
 
 const status = document.getElementById('status');
 const artworkDiv = document.getElementById('artwork');
