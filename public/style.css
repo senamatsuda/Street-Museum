@@ -9,10 +9,11 @@
 
 body {
   font-family: sans-serif;
-  margin: 0;
+  margin: 0 auto;
   padding: var(--page-margin);
   background-color: #FFFCF2;
-  max-width: 100%;
+  width: 100%;
+  max-width: 1200px;
   overflow-x: hidden;
 }
 
@@ -105,6 +106,16 @@ img {
   }
   100% {
     box-shadow: 0 0 5px rgba(255, 255, 0, var(--glow, 0));
+  }
+}
+
+@media (min-width: 900px) {
+  :root {
+    --page-margin: 3rem;
+  }
+
+  #map {
+    height: 70vh;
   }
 }
 
