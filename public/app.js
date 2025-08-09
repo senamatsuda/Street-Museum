@@ -21,8 +21,7 @@ const translations = {
     currentLocation: "現在地",
     welcome: "ようこそ！",
     moveToView: "指定された場所に移動して作品を表示してください。",
-    presence: "アート気配モード",
-    inRange: "50m以内です！",
+    explore: "探索モード",
     postedSuccessfully: "投稿に成功しました"
   },
   en: {
@@ -47,8 +46,7 @@ const translations = {
     currentLocation: "Current location",
     welcome: "Welcome!",
     moveToView: "Move to the specified location to view the artwork.",
-    presence: "Art Presence",
-    inRange: "Within 50m!",
+    explore: "Explore Mode",
     postedSuccessfully: "Posted successfully"
   }
 };
@@ -64,36 +62,6 @@ function getTitle(a) {
 function getDescription(a) {
   if (!a.description) return '';
   return typeof a.description === 'string' ? a.description : (a.description[currentLang] || a.description.ja || a.description.en || '');
-}
-
-function getArtworkId(a) {
-  return a.id || `${getTitle(a)}_${a.lat}_${a.lng}`;
-}
-
-function loadSenses(a) {
-  const all = JSON.parse(localStorage.getItem('artworkSenses') || '{}');
-  return all[getArtworkId(a)] || { sound: '', temperature: '', smell: '', weather: '' };
-}
-
-function storeSenses(a, senses) {
-  const all = JSON.parse(localStorage.getItem('artworkSenses') || '{}');
-  all[getArtworkId(a)] = senses;
-  localStorage.setItem('artworkSenses', JSON.stringify(all));
-}
-
-function populateSenses(a) {
-  currentArtwork = a;
-  const senses = loadSenses(a);
-  senseInputs.sound.value = senses.sound || '';
-  senseInputs.temperature.value = senses.temperature || '';
-  senseInputs.smell.value = senses.smell || '';
-  senseInputs.weather.value = senses.weather || '';
-  sensesDiv.classList.remove('hidden');
-}
-
-function hideSenses() {
-  sensesDiv.classList.add('hidden');
-  currentArtwork = null;
 }
 
 let currentStatusKey = 'checkingLocation';
@@ -117,7 +85,7 @@ function updateTexts() {
   document.getElementById('location-input').placeholder = t('searchLocationPlaceholder');
   searchBtn.textContent = t('searchButton');
   document.getElementById('post-btn').textContent = t('postButton');
-  presenceToggle.textContent = artPresenceMode ? t('map') : t('presence');
+  presenceToggle.textContent = artPresenceMode ? t('map') : t('explore');
   setStatus(currentStatusKey, currentStatusExtra);
   if (userMarker) {
     userMarker.bindPopup(t('currentLocation'));
@@ -136,7 +104,6 @@ document.getElementById('language-select').addEventListener('change', e => {
 
 const DEFAULT_ARTWORKS = [
   {
-    id: 'hiroshima-library',
     title: {
       ja: "広島大学中央図書館",
       en: "Hiroshima University Central Library"
@@ -172,14 +139,6 @@ const searchStatus = document.getElementById('search-status');
 const searchResults = document.getElementById('search-results');
 const presenceToggle = document.getElementById('presence-toggle');
 const arrow = document.getElementById('arrow');
-const sensesDiv = document.getElementById('senses');
-const senseInputs = {
-  sound: document.getElementById('sense-sound'),
-  temperature: document.getElementById('sense-temp'),
-  smell: document.getElementById('sense-smell'),
-  weather: document.getElementById('sense-weather')
-};
-const saveSensesBtn = document.getElementById('save-senses');
 
 function createImageIcon(url) {
   return L.divIcon({
@@ -208,7 +167,6 @@ let searchMarker;
 let userMarker;
 let artPresenceMode = false;
 let currentPresenceTarget;
-let currentArtwork;
 
 window.addEventListener('resize', () => {
   if (map) {
@@ -256,16 +214,6 @@ function distanceMeters(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-function bearingTo(lat1, lon1, lat2, lon2) {
-  const toRad = deg => deg * Math.PI / 180;
-  const φ1 = toRad(lat1);
-  const φ2 = toRad(lat2);
-  const Δλ = toRad(lon2 - lon1);
-  const y = Math.sin(Δλ) * Math.cos(φ2);
-  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
-  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-}
-
 function updateGlow() {
   artworks.forEach(a => {
     if (a.marker) {
@@ -291,18 +239,29 @@ function updatePresence() {
     }
   });
   if (!nearest) return;
-  const within = minDist < THRESHOLD_METERS;
-  arrow.classList.toggle('in-range', within);
-  setStatus(within ? 'inRange' : 'moveToView');
   currentPresenceTarget = nearest;
-  const angle = bearingTo(userLat, userLng, nearest.lat, nearest.lng);
+  const angle = Math.atan2(nearest.lng - userLng, nearest.lat - userLat) * 180 / Math.PI;
   arrow.style.transform = `rotate(${angle}deg)`;
-  // Hide artwork details in presence mode; only show direction arrow
-  artworkDiv.classList.add('hidden');
+  artworkDiv.classList.remove('hidden');
+  artTitle.textContent = getTitle(nearest);
+  const ratio = Math.min(minDist / 200, 1);
   if (nearest.type === 'audio') {
-    artAudio.pause();
+    artImage.classList.add('hidden');
+    artAudio.classList.remove('hidden');
+    if (artAudio.src !== nearest.data) {
+      artAudio.src = nearest.data;
+      artAudio.loop = true;
+    }
+    artAudio.volume = 1 - ratio;
+    if (artAudio.paused) artAudio.play();
+  } else {
+    artAudio.classList.add('hidden');
+    artImage.classList.remove('hidden');
+    artImage.src = nearest.image || nearest.data;
+    const blur = 20 * ratio;
+    artImage.style.filter = `blur(${blur}px)`;
   }
-  hideSenses();
+  artDescription.textContent = minDist < THRESHOLD_METERS ? getDescription(nearest) : '';
 }
 
 function showError(err) {
@@ -344,26 +303,15 @@ presenceToggle.addEventListener('click', () => {
   artPresenceMode = !artPresenceMode;
   document.getElementById('map').classList.toggle('hidden', artPresenceMode);
   arrow.classList.toggle('hidden', !artPresenceMode);
-  // Always hide artwork content when switching modes
-  artworkDiv.classList.add('hidden');
-  artImage.style.filter = '';
-  if (currentPresenceTarget && currentPresenceTarget.type === 'audio') {
-    artAudio.pause();
+  if (!artPresenceMode) {
+    artworkDiv.classList.add('hidden');
+    artImage.style.filter = '';
+    if (currentPresenceTarget && currentPresenceTarget.type === 'audio') {
+      artAudio.pause();
+    }
   }
-  hideSenses();
   updateTexts();
   updatePresence();
-});
-
-saveSensesBtn.addEventListener('click', () => {
-  if (!currentArtwork) return;
-  const senses = {
-    sound: senseInputs.sound.value.trim(),
-    temperature: senseInputs.temperature.value.trim(),
-    smell: senseInputs.smell.value.trim(),
-    weather: senseInputs.weather.value.trim()
-  };
-  storeSenses(currentArtwork, senses);
 });
 
 searchBtn.addEventListener('click', () => {
@@ -446,12 +394,10 @@ function showArtwork(art) {
       artImage.src = art.image || art.data;
     }
     artDescription.textContent = getDescription(art);
-    populateSenses(art);
     artworkDiv.classList.remove('hidden');
   } else {
     setStatus('moveToView');
     artworkDiv.classList.add('hidden');
-    hideSenses();
   }
 }
 
@@ -472,7 +418,6 @@ document.getElementById('post-btn').addEventListener('click', () => {
   const reader = new FileReader();
   reader.onload = () => {
     const newArt = {
-      id: Date.now().toString(),
       title,
       lat,
       lng,
