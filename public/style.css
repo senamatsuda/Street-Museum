@@ -1,5 +1,6 @@
 :root {
-  --page-margin: 2rem;
+  --page-margin: clamp(0.75rem, 2vw, 3rem);
+  --font-scale: clamp(14px, 1.3vw + 10px, 18px);
 }
 
 /* Ensure elements size correctly within the viewport */
@@ -10,11 +11,16 @@
 body {
   font-family: sans-serif;
   margin: 0 auto;
-  padding: var(--page-margin);
+  padding: calc(var(--page-margin) + env(safe-area-inset-top, 0))
+           calc(var(--page-margin) + env(safe-area-inset-right, 0))
+           calc(var(--page-margin) + env(safe-area-inset-bottom, 0))
+           calc(var(--page-margin) + env(safe-area-inset-left, 0));
   background-color: #FFFCF2;
   width: 100%;
   max-width: 1200px;
   overflow-x: hidden;
+  font-size: var(--font-scale);
+  -webkit-text-size-adjust: 100%;
 }
 
 #title {
@@ -22,6 +28,7 @@ body {
   margin: calc(var(--page-margin) * -1) calc(var(--page-margin) * -1) 1rem;
   padding: 1rem;
   text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .hidden {
@@ -36,6 +43,7 @@ body {
   padding: 0.5rem 1rem;
   margin-right: 0.5rem;
   cursor: pointer;
+  min-height: 44px; /* iPhone推奨タップ高さ */
 }
 
 .tabs button.active {
@@ -48,11 +56,22 @@ img {
   height: auto;
 }
 
-#map {
-  height: 60vh;
-  min-height: 300px;
-  margin: 1rem 0;
-  width: 100%;
+/* dvh 対応＋フォールバック */
+@supports (height: 100dvh) {
+  #map {
+    height: 60dvh;
+    min-height: 300px;
+    margin: 1rem 0;
+    width: 100%;
+  }
+}
+@supports not (height: 100dvh) {
+  #map {
+    height: calc(var(--vh, 1vh) * 60);
+    min-height: 300px;
+    margin: 1rem 0;
+    width: 100%;
+  }
 }
 
 .leaflet-tile {
@@ -60,9 +79,9 @@ img {
 }
 
 .media-marker {
-  font-size: 24px;
-  width: 32px;
-  height: 32px;
+  font-size: clamp(18px, 2.2vw, 24px);
+  width: clamp(28px, 3.5vw, 32px);
+  height: clamp(28px, 3.5vw, 32px);
   text-align: center;
   border-radius: 50%;
   display: flex;
@@ -73,8 +92,8 @@ img {
 }
 
 .thumb-marker {
-  width: 40px;
-  height: 40px;
+  width: clamp(32px, 5vw, 40px);
+  height: clamp(32px, 5vw, 40px);
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid rgba(255, 255, 255, 0.8);
@@ -113,9 +132,11 @@ img {
   :root {
     --page-margin: 3rem;
   }
-
-  #map {
-    height: 70vh;
+  @supports (height: 100dvh) {
+    #map { height: 70dvh; }
+  }
+  @supports not (height: 100dvh) {
+    #map { height: calc(var(--vh, 1vh) * 70); }
   }
 }
 
@@ -127,15 +148,19 @@ img {
   .tabs {
     display: flex;
     flex-direction: column;
+    gap: 0.5rem;
   }
 
   .tabs button {
     width: 100%;
-    margin: 0 0 0.5rem 0;
+    margin: 0;
   }
 
-  #map {
-    height: 50vh;
+  @supports (height: 100dvh) {
+    #map { height: 55dvh; }
+  }
+  @supports not (height: 100dvh) {
+    #map { height: calc(var(--vh, 1vh) * 55); }
   }
 
   #post-form input,
@@ -160,11 +185,9 @@ img {
 }
 
 #arrow {
-  width: 0;
-  height: 0;
-  border-left: 20px solid transparent;
-  border-right: 20px solid transparent;
-  border-bottom: 40px solid red;
+  border-left: clamp(14px, 3vw, 20px) solid transparent;
+  border-right: clamp(14px, 3vw, 20px) solid transparent;
+  border-bottom: clamp(28px, 6vw, 40px) solid red;
   margin: 1rem auto;
   transition: transform 0.2s linear;
 }
@@ -181,4 +204,3 @@ img {
 #senses input {
   width: 100%;
 }
-
