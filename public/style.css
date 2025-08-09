@@ -1,194 +1,150 @@
+/* =========================
+   Responsive % / vw ベース版
+   ========================= */
+
 :root {
-  /* 余白と文字サイズを端末幅に合わせて調整 */
-  --page-margin: clamp(0.75rem, 2vw, 3rem);
-  --font-scale: clamp(14px, 1.3vw + 10px, 18px);
+  /* 画面幅に比例するパディング（%相当：vwで指定） */
+  --page-pad: clamp(12px, 4vw, 32px);
+  --container-max: 1200px;
 }
 
 /* Ensure elements size correctly within the viewport */
-* {
-  box-sizing: border-box;
+* { box-sizing: border-box; }
+
+html, body {
+  max-width: 100%;
+  overflow-x: hidden; /* 横スクロール抑止（Leaflet内部は触らない） */
 }
 
 body {
   font-family: sans-serif;
   margin: 0 auto;
-  padding: var(--page-margin);
-  background-color: #FFFCF2;
+  /* 本体幅は“画面幅の割合”で決める：余白はvw依存 */
   width: 100%;
-  max-width: 1200px;
-  overflow-x: hidden;           /* 横スクロール禁止（Leaflet には影響しない） */
-  font-size: var(--font-scale);
+  max-width: var(--container-max);
+  padding: var(--page-pad);
+  background-color: #FFFCF2;
   -webkit-text-size-adjust: 100%;
 }
 
+/* 見出し：モバイルは通常幅、PC幅のみフルブリード風 */
 #title {
   background-color: #d9c6a0;
-  /* フルブリード風の負マージンはPCのみ。スマホでは外す */
-  margin: calc(var(--page-margin) * -1) calc(var(--page-margin) * -1) 1rem;
+  margin: 0 0 1rem 0;      /* モバイルははみ出さない */
   padding: 1rem;
   text-align: center;
   overflow-wrap: anywhere;
 }
 
-.hidden {
-  display: none;
-}
-
-.tabs {
-  margin-bottom: 1rem;
-}
-
+/* タブ */
+.tabs { margin-bottom: 1rem; }
 .tabs button {
   padding: 0.5rem 1rem;
   margin-right: 0.5rem;
   cursor: pointer;
-  min-height: 44px; /* iPhone推奨タップ高さ */
+  min-height: 44px;
 }
+.tabs button.active { background: #333; color: #fff; }
 
-.tabs button.active {
-  background: #333;
-  color: #fff;
-}
+.hidden { display: none; }
 
-img {
-  max-width: 100%;
-  height: auto;
-}
+img { max-width: 100%; height: auto; }
 
-/* --------- 地図の高さ：dvh優先 + 安全なフォールバック --------- */
+/* === 地図：幅は%（親=bodyの100%）、高さはdvh優先 === */
 @supports (height: 100dvh) {
   #map {
+    width: 100%;
     height: 60dvh;
     min-height: 300px;
     margin: 1rem 0;
-    width: 100%;
   }
 }
 @supports not (height: 100dvh) {
   #map {
-    height: 60vh;              /* フォールバック（JS不要） */
+    width: 100%;
+    height: 60vh;   /* フォールバック */
     min-height: 300px;
     margin: 1rem 0;
-    width: 100%;
   }
 }
 
-/* Leaflet の内部要素は触らない（はみ出しクリップはNG） */
-.leaflet-tile {
-  filter: url(#sepia) brightness(0.8);
-}
+.leaflet-tile { filter: url(#sepia) brightness(0.8); }
 
+/* マーカーは画面幅に応じてわずかにスケール（%/vw相当） */
 .media-marker {
   font-size: clamp(18px, 2.2vw, 24px);
   width: clamp(28px, 3.5vw, 32px);
   height: clamp(28px, 3.5vw, 32px);
   text-align: center;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid rgba(80, 80, 80, 0.7);
-  background-color: rgba(230, 230, 230, 0.7);
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid rgba(80,80,80,0.7);
+  background-color: rgba(230,230,230,0.7);
 }
 
 .thumb-marker {
   width: clamp(32px, 5vw, 40px);
   height: clamp(32px, 5vw, 40px);
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 10px rgba(255, 255, 0, var(--glow, 0));
+  border-radius: 50%; overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.8);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 10px rgba(255,255,0, var(--glow, 0));
   animation: pulse 2s infinite;
 }
-
 .thumb-marker img,
-.thumb-marker .thumb-audio {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.thumb-marker .thumb-audio {
-  font-size: 24px;
-}
+.thumb-marker .thumb-audio { width: 100%; height: 100%; object-fit: cover; }
+.thumb-marker .thumb-audio { font-size: 24px; }
 
 @keyframes pulse {
-  0% { box-shadow: 0 0 5px rgba(255, 255, 0, var(--glow, 0)); }
-  50% { box-shadow: 0 0 15px rgba(255, 255, 0, var(--glow, 0)); }
-  100% { box-shadow: 0 0 5px rgba(255, 255, 0, var(--glow, 0)); }
+  0% { box-shadow: 0 0 5px rgba(255,255,0,var(--glow,0)); }
+  50% { box-shadow: 0 0 15px rgba(255,255,0,var(--glow,0)); }
+  100% { box-shadow: 0 0 5px rgba(255,255,0,var(--glow,0)); }
 }
 
+/* ===== PC幅（大きめの画面） ===== */
 @media (min-width: 900px) {
-  :root { --page-margin: 3rem; }
+  /* PCでは見出しを左右フルブリード風に */
+  #title {
+    /* body のパディングぶんだけ外へ広げる（横スクロールは出さない） */
+    margin-inline: calc(var(--page-pad) * -1);
+    margin-block-end: 1rem;
+  }
+
   @supports (height: 100dvh) { #map { height: 70dvh; } }
   @supports not (height: 100dvh) { #map { height: 70vh; } }
 }
 
+/* ===== スマホ幅 ===== */
 @media (max-width: 600px) {
-  :root { --page-margin: 1rem; }
+  /* 画面幅ベースの%指定：スマホは実質100%幅 */
+  body { padding: clamp(10px, 5vw, 24px); }
 
-  /* スマホ時は #title の負マージンを無効化→横はみ出し防止 */
-  #title {
-    margin: 0 0 1rem 0;
-  }
-
-  .tabs {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .tabs button {
-    width: 100%;
-    margin: 0;
-  }
+  .tabs { display: flex; flex-direction: column; gap: 0.5rem; }
+  .tabs button { width: 100%; margin: 0; }
 
   @supports (height: 100dvh) { #map { height: 55dvh; } }
   @supports not (height: 100dvh) { #map { height: 55vh; } }
 
   #post-form input,
-  #post-form button {
-    width: 100%;
-  }
+  #post-form button { width: 100%; }
 }
 
-#search-results {
-  list-style: none;
-  padding: 0;
-  margin: 0.5rem 0;
-}
+/* その他 */
+#search-results { list-style: none; padding: 0; margin: 0.5rem 0; }
+#search-results li { cursor: pointer; padding: 0.25rem; }
+#search-results li.selected { background: #e0e0e0; }
 
-#search-results li {
-  cursor: pointer;
-  padding: 0.25rem;
-}
-
-#search-results li.selected {
-  background: #e0e0e0;
-}
-
+/* 三角形が画面幅を押し広げないように vw ベース */
 #arrow {
-  /* 三角形が横幅を押し広げないようにclampに変更 */
-  border-left: clamp(14px, 3vw, 20px) solid transparent;
-  border-right: clamp(14px, 3vw, 20px) solid transparent;
-  border-bottom: clamp(28px, 6vw, 40px) solid red;
+  width: 0; height: 0;
+  border-left: clamp(12px, 3vw, 20px) solid transparent;
+  border-right: clamp(12px, 3vw, 20px) solid transparent;
+  border-bottom: clamp(24px, 6vw, 40px) solid red;
   margin: 1rem auto;
   transition: transform 0.2s linear;
 }
+#arrow.in-range { border-bottom-color: green; }
 
-#arrow.in-range {
-  border-bottom-color: green;
-}
-
-#senses label {
-  display: block;
-  margin: 0.25rem 0;
-}
-
-#senses input {
-  width: 100%;
-}
+#senses label { display: block; margin: 0.25rem 0; }
+#senses input { width: 100%; }
