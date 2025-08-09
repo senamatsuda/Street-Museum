@@ -148,3 +148,4 @@ img { max-width: 100%; height: auto; }
 
 #senses label { display: block; margin: 0.25rem 0; }
 #senses input { width: 100%; }
+*{outline:1px dashed rgba(0,0,0,.15);}
