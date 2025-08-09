@@ -105,20 +105,6 @@ document.getElementById('language-select').addEventListener('change', e => {
 const DEFAULT_ARTWORKS = [
   {
     title: {
-      ja: "広島大学中央図書館",
-      en: "Hiroshima University Central Library"
-    },
-    lat: 34.403244,
-    lng: 132.713469,
-    image: "higashihiroshima.jpeg",
-    description: {
-      ja: "広島大学東広島キャンパスの中央図書館です。",
-      en: "Central library at Hiroshima University's Higashihiroshima Campus."
-    },
-    type: 'image'
-  },
-  {
-    title: {
       ja: "spring",
       en: "春"
     },
