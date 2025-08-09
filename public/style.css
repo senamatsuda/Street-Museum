@@ -204,31 +204,3 @@ img {
 #senses input {
   width: 100%;
 }
-
-/* ===== 横スクロール抑止の最終防衛線 ===== */
-html, body {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: clip;          /* Safari/Chromeで横スクロールを無効化（hiddenより安全） */
-}
-
-/* Leafletやフルブリード要素がはみ出しても横スクロールさせない */
-#map,
-.leaflet-container,
-.leaflet-pane,
-.leaflet-control-container {
-  max-width: 100%;
-  overflow: hidden;
-}
-
-/* モバイル時は #title のネガティブマージンをやめる（はみ出しの主犯対策） */
-@media (max-width: 640px) {
-  #title {
-    margin: 0 0 1rem 0;      /* 左右の -margin を無効化 */
-  }
-}
-
-/* 極端に幅が広いコンテンツの保険（長い単語/URLなど） */
-body, #title, .tabs, #post-form, #search-results, #senses {
-  overflow-wrap: anywhere;
-}
