@@ -317,7 +317,7 @@ function updatePresence() {
     const blur = 20 * ratio;
     artImage.style.filter = `blur(${blur}px)`;
   }
-  artDescription.textContent = minDist < THRESHOLD_METERS ? getDescription(nearest) : '';
+  artDescription.textContent = getDescription(nearest);
 }
 
 function showError(err) {
