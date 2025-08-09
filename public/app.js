@@ -297,31 +297,12 @@ function updatePresence() {
   currentPresenceTarget = nearest;
   const angle = bearingTo(userLat, userLng, nearest.lat, nearest.lng);
   arrow.style.transform = `rotate(${angle}deg)`;
-  artworkDiv.classList.remove('hidden');
-  artTitle.textContent = getTitle(nearest);
-  const ratio = Math.min(minDist / 200, 1);
+  // Hide artwork details in presence mode; only show direction arrow
+  artworkDiv.classList.add('hidden');
   if (nearest.type === 'audio') {
-    artImage.classList.add('hidden');
-    artAudio.classList.remove('hidden');
-    if (artAudio.src !== nearest.data) {
-      artAudio.src = nearest.data;
-      artAudio.loop = true;
-    }
-    artAudio.volume = 1 - ratio;
-    if (artAudio.paused) artAudio.play();
-  } else {
-    artAudio.classList.add('hidden');
-    artImage.classList.remove('hidden');
-    artImage.src = nearest.image || nearest.data;
-    const blur = within ? 0 : 20 * ratio;
-    artImage.style.filter = blur ? `blur(${blur}px)` : 'none';
+    artAudio.pause();
   }
-  artDescription.textContent = within ? getDescription(nearest) : '';
-  if (within) {
-    populateSenses(nearest);
-  } else {
-    hideSenses();
-  }
+  hideSenses();
 }
 
 function showError(err) {
@@ -363,14 +344,13 @@ presenceToggle.addEventListener('click', () => {
   artPresenceMode = !artPresenceMode;
   document.getElementById('map').classList.toggle('hidden', artPresenceMode);
   arrow.classList.toggle('hidden', !artPresenceMode);
-  if (!artPresenceMode) {
-    artworkDiv.classList.add('hidden');
-    artImage.style.filter = '';
-    if (currentPresenceTarget && currentPresenceTarget.type === 'audio') {
-      artAudio.pause();
-    }
-    hideSenses();
+  // Always hide artwork content when switching modes
+  artworkDiv.classList.add('hidden');
+  artImage.style.filter = '';
+  if (currentPresenceTarget && currentPresenceTarget.type === 'audio') {
+    artAudio.pause();
   }
+  hideSenses();
   updateTexts();
   updatePresence();
 });
