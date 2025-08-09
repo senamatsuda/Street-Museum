@@ -148,4 +148,34 @@ img { max-width: 100%; height: auto; }
 
 #senses label { display: block; margin: 0.25rem 0; }
 #senses input { width: 100%; }
-*{outline:1px dashed rgba(0,0,0,.15);}
+
+/* ===== 横スクロール強制オフ & はみ出し抑止（安全版） ===== */
+
+/* 1) ページ全体をビューポート幅以内に固定 */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: clip; /* hidden よりも iOS/Safari で安全 */
+}
+
+/* 2) レイアウトの親にかかりがちな固定幅を無効化 */
+:where(#app, main, .container, .wrapper) {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+/* 3) モバイル時はフルブリード見出しをやめる（横はみ出しの主犯） */
+@media (max-width: 640px) {
+  #title { margin-inline: 0; }  /* 左右の負マージンを撤回 */
+}
+
+/* 4) 横幅を押し広げがちな要素への保険 */
+img, svg, canvas, video, iframe { max-width: 100%; height: auto; }
+table { display: block; max-width: 100%; overflow-x: auto; }
+#arrow {
+  border-left: clamp(12px, 3vw, 20px) solid transparent;
+  border-right: clamp(12px, 3vw, 20px) solid transparent;
+  border-bottom: clamp(24px, 6vw, 40px) solid red;
+}
+body, #title, .tabs, #post-form, #senses { overflow-wrap: anywhere; }
