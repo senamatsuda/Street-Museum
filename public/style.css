@@ -5,6 +5,7 @@
 body {
   font-family: sans-serif;
   margin: var(--page-margin);
+  background-color: #FFFCF2;
 }
 
 #title {
