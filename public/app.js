@@ -118,8 +118,6 @@ function updateTexts() {
   searchBtn.textContent = t('searchButton');
   document.getElementById('post-btn').textContent = t('postButton');
   presenceToggle.textContent = artPresenceMode ? t('map') : t('presence');
-  document.getElementById('map').classList.toggle('hidden', artPresenceMode);
-  arrow.classList.toggle('hidden', !artPresenceMode);
   setStatus(currentStatusKey, currentStatusExtra);
   if (userMarker) {
     userMarker.bindPopup(t('currentLocation'));
@@ -363,6 +361,8 @@ for (const input of locModeInputs) {
 
 presenceToggle.addEventListener('click', () => {
   artPresenceMode = !artPresenceMode;
+  document.getElementById('map').classList.toggle('hidden', artPresenceMode);
+  arrow.classList.toggle('hidden', !artPresenceMode);
   if (!artPresenceMode) {
     artworkDiv.classList.add('hidden');
     artImage.style.filter = '';
