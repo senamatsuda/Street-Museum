@@ -1,4 +1,5 @@
 :root {
+  /* 余白と文字サイズを端末幅に合わせて調整 */
   --page-margin: clamp(0.75rem, 2vw, 3rem);
   --font-scale: clamp(14px, 1.3vw + 10px, 18px);
 }
@@ -11,20 +12,18 @@
 body {
   font-family: sans-serif;
   margin: 0 auto;
-  padding: calc(var(--page-margin) + env(safe-area-inset-top, 0))
-           calc(var(--page-margin) + env(safe-area-inset-right, 0))
-           calc(var(--page-margin) + env(safe-area-inset-bottom, 0))
-           calc(var(--page-margin) + env(safe-area-inset-left, 0));
+  padding: var(--page-margin);
   background-color: #FFFCF2;
   width: 100%;
   max-width: 1200px;
-  overflow-x: hidden;
+  overflow-x: hidden;           /* 横スクロール禁止（Leaflet には影響しない） */
   font-size: var(--font-scale);
   -webkit-text-size-adjust: 100%;
 }
 
 #title {
   background-color: #d9c6a0;
+  /* フルブリード風の負マージンはPCのみ。スマホでは外す */
   margin: calc(var(--page-margin) * -1) calc(var(--page-margin) * -1) 1rem;
   padding: 1rem;
   text-align: center;
@@ -56,7 +55,7 @@ img {
   height: auto;
 }
 
-/* dvh 対応＋フォールバック */
+/* --------- 地図の高さ：dvh優先 + 安全なフォールバック --------- */
 @supports (height: 100dvh) {
   #map {
     height: 60dvh;
@@ -67,13 +66,14 @@ img {
 }
 @supports not (height: 100dvh) {
   #map {
-    height: calc(var(--vh, 1vh) * 60);
+    height: 60vh;              /* フォールバック（JS不要） */
     min-height: 300px;
     margin: 1rem 0;
     width: 100%;
   }
 }
 
+/* Leaflet の内部要素は触らない（はみ出しクリップはNG） */
 .leaflet-tile {
   filter: url(#sepia) brightness(0.8);
 }
@@ -117,32 +117,23 @@ img {
 }
 
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 5px rgba(255, 255, 0, var(--glow, 0));
-  }
-  50% {
-    box-shadow: 0 0 15px rgba(255, 255, 0, var(--glow, 0));
-  }
-  100% {
-    box-shadow: 0 0 5px rgba(255, 255, 0, var(--glow, 0));
-  }
+  0% { box-shadow: 0 0 5px rgba(255, 255, 0, var(--glow, 0)); }
+  50% { box-shadow: 0 0 15px rgba(255, 255, 0, var(--glow, 0)); }
+  100% { box-shadow: 0 0 5px rgba(255, 255, 0, var(--glow, 0)); }
 }
 
 @media (min-width: 900px) {
-  :root {
-    --page-margin: 3rem;
-  }
-  @supports (height: 100dvh) {
-    #map { height: 70dvh; }
-  }
-  @supports not (height: 100dvh) {
-    #map { height: calc(var(--vh, 1vh) * 70); }
-  }
+  :root { --page-margin: 3rem; }
+  @supports (height: 100dvh) { #map { height: 70dvh; } }
+  @supports not (height: 100dvh) { #map { height: 70vh; } }
 }
 
 @media (max-width: 600px) {
-  :root {
-    --page-margin: 1rem;
+  :root { --page-margin: 1rem; }
+
+  /* スマホ時は #title の負マージンを無効化→横はみ出し防止 */
+  #title {
+    margin: 0 0 1rem 0;
   }
 
   .tabs {
@@ -156,12 +147,8 @@ img {
     margin: 0;
   }
 
-  @supports (height: 100dvh) {
-    #map { height: 55dvh; }
-  }
-  @supports not (height: 100dvh) {
-    #map { height: calc(var(--vh, 1vh) * 55); }
-  }
+  @supports (height: 100dvh) { #map { height: 55dvh; } }
+  @supports not (height: 100dvh) { #map { height: 55vh; } }
 
   #post-form input,
   #post-form button {
@@ -185,6 +172,7 @@ img {
 }
 
 #arrow {
+  /* 三角形が横幅を押し広げないようにclampに変更 */
   border-left: clamp(14px, 3vw, 20px) solid transparent;
   border-right: clamp(14px, 3vw, 20px) solid transparent;
   border-bottom: clamp(28px, 6vw, 40px) solid red;
