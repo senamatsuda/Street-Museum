@@ -116,6 +116,76 @@ const DEFAULT_ARTWORKS = [
       en: "Central library at Hiroshima University's Higashihiroshima Campus."
     },
     type: 'image'
+  },
+  {
+    title: {
+      ja: "spring",
+      en: "spring"
+    },
+    lat: 0,
+    lng: 0,
+    image: "spring.jpeg",
+    description: {
+      ja: "",
+      en: ""
+    },
+    type: 'image'
+  },
+  {
+    title: {
+      ja: "watermelon",
+      en: "watermelon"
+    },
+    lat: 0,
+    lng: 0,
+    image: "watermelon.jpeg",
+    description: {
+      ja: "",
+      en: ""
+    },
+    type: 'image'
+  },
+  {
+    title: {
+      ja: "cherry blossom",
+      en: "cherry blossom"
+    },
+    lat: 0,
+    lng: 0,
+    image: "cherry-blossom.jpeg",
+    description: {
+      ja: "",
+      en: ""
+    },
+    type: 'image'
+  },
+  {
+    title: {
+      ja: "firework",
+      en: "firework"
+    },
+    lat: 0,
+    lng: 0,
+    image: "firework.jpeg",
+    description: {
+      ja: "",
+      en: ""
+    },
+    type: 'image'
+  },
+  {
+    title: {
+      ja: "rainbow",
+      en: "rainbow"
+    },
+    lat: 0,
+    lng: 0,
+    image: "rainbow.jpeg",
+    description: {
+      ja: "",
+      en: ""
+    },
+    type: 'image'
   }
 ];
 
