@@ -35,7 +35,8 @@ body {
   overflow-wrap: anywhere;
 }
 
-.hidden { display: none; }
+.hidden { display: none !important; }
+
 
 /* タブ：折り返し可能にしてはみ出しを根絶 */
 .tabs {
