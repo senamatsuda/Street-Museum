@@ -2,32 +2,25 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>街角ミュージアム</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"
+  />
 </head>
 <body>
-  <!-- SVGは0幅/0高さなのでOK -->
   <svg style="position:absolute;width:0;height:0">
     <filter id="sepia">
-      <feColorMatrix type="matrix"
-        values="0.393 0.769 0.189 0 0
-                0.349 0.686 0.168 0 0
-                0.272 0.534 0.131 0 0
-                0 0 0 1 0"/>
+      <feColorMatrix type="matrix" values="0.393 0.769 0.189 0 0 0.349 0.686 0.168 0 0 0.272 0.534 0.131 0 0 0 0 0 1 0"/>
     </filter>
   </svg>
-
   <h1 id="title">街角ミュージアム</h1>
-
-  <!-- selectにmax-width効くようclassを付与 -->
-  <select id="language-select" class="fit-parent">
+  <select id="language-select">
     <option value="ja" selected>日本語</option>
     <option value="en">English</option>
   </select>
-
   <div class="tabs">
     <button id="tab-map" class="active">マップ</button>
     <button id="tab-post">投稿</button>
@@ -43,13 +36,6 @@
       <img id="art-image" src="" alt="">
       <audio id="art-audio" controls class="hidden"></audio>
       <p id="art-description"></p>
-      <div id="senses" class="hidden">
-        <label>🎵 Sound <input id="sense-sound" type="text"></label>
-        <label>🌡️ Temperature <input id="sense-temp" type="text"></label>
-        <label>👃 Smell <input id="sense-smell" type="text"></label>
-        <label>☀️ Weather <input id="sense-weather" type="text"></label>
-        <button type="button" id="save-senses">💾</button>
-      </div>
     </div>
   </div>
 
@@ -59,10 +45,8 @@
       <input type="text" id="new-title" placeholder="タイトル">
       <input type="file" id="new-file" accept="image/*,audio/*">
       <div class="location-options">
-        <label><input type="radio" name="loc-mode" value="current" checked> 
-          <span id="label-use-current">現在地を使用</span></label>
-        <label><input type="radio" name="loc-mode" value="search"> 
-          <span id="label-search-by-place">場所名で検索</span></label>
+        <label><input type="radio" name="loc-mode" value="current" checked> <span id="label-use-current">現在地を使用</span></label>
+        <label><input type="radio" name="loc-mode" value="search"> <span id="label-search-by-place">場所名で検索</span></label>
       </div>
       <div id="search-box" class="hidden">
         <input type="text" id="location-input" placeholder="場所を検索">
@@ -73,7 +57,6 @@
       <button type="button" id="post-btn">投稿</button>
     </form>
   </div>
-
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="app.js"></script>
 </body>
