@@ -151,3 +151,23 @@ img {
   transition: transform 0.2s linear;
 }
 
+#welcome-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  pointer-events: none;
+  opacity: 0;
+  filter: blur(10px);
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+#welcome-message.show {
+  opacity: 1;
+  filter: blur(0);
+}
+
