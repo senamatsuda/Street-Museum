@@ -387,6 +387,20 @@ presenceToggle.addEventListener('click', () => {
       artAudio.pause();
     }
     status.classList.remove('hidden');
+    if (map && userLat != null && userLng != null) {
+      if (!userMarker) {
+        userMarker = L.circleMarker([userLat, userLng], {
+          radius: 8,
+          color: 'red',
+          fillColor: 'red',
+          fillOpacity: 0.5
+        }).addTo(map);
+      } else {
+        userMarker.setLatLng([userLat, userLng]);
+      }
+      map.setView([userLat, userLng]);
+      setTimeout(() => map.invalidateSize(), 0);
+    }
   }
   updateTexts();
   updatePresence();
