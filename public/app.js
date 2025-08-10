@@ -97,6 +97,15 @@ function updateTexts() {
   });
 }
 
+function showWelcomeMessage() {
+  welcomeMessage.textContent = t('welcome');
+  welcomeMessage.classList.add('show');
+  clearTimeout(welcomeTimer);
+  welcomeTimer = setTimeout(() => {
+    welcomeMessage.classList.remove('show');
+  }, 1500);
+}
+
 document.getElementById('language-select').addEventListener('change', e => {
   currentLang = e.target.value;
   updateTexts();
@@ -195,6 +204,7 @@ const searchStatus = document.getElementById('search-status');
 const searchResults = document.getElementById('search-results');
 const presenceToggle = document.getElementById('presence-toggle');
 const arrow = document.getElementById('arrow');
+const welcomeMessage = document.getElementById('welcome-message');
 
 function createImageIcon(url) {
   return L.divIcon({
@@ -223,6 +233,8 @@ let searchMarker;
 let userMarker;
 let artPresenceMode = false;
 let currentPresenceTarget;
+let presenceWithin = false;
+let welcomeTimer;
 
 window.addEventListener('resize', () => {
   if (map) {
@@ -318,6 +330,11 @@ function updatePresence() {
     artImage.style.filter = `blur(${blur}px)`;
   }
   artDescription.textContent = getDescription(nearest);
+  const within = minDist < THRESHOLD_METERS;
+  if (within && !presenceWithin) {
+    showWelcomeMessage();
+  }
+  presenceWithin = within;
 }
 
 function showError(err) {
@@ -357,6 +374,7 @@ for (const input of locModeInputs) {
 
 presenceToggle.addEventListener('click', () => {
   artPresenceMode = !artPresenceMode;
+  presenceWithin = false;
   document.getElementById('map').classList.toggle('hidden', artPresenceMode);
   arrow.classList.toggle('hidden', !artPresenceMode);
   if (!artPresenceMode) {
@@ -439,6 +457,7 @@ function showArtwork(art) {
   const within = distanceMeters(userLat, userLng, art.lat, art.lng) < THRESHOLD_METERS;
   if (within) {
     setStatus('welcome');
+    showWelcomeMessage();
     artTitle.textContent = getTitle(art);
     if (art.type === 'audio') {
       artImage.classList.add('hidden');
