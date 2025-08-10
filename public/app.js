@@ -240,7 +240,7 @@ window.addEventListener('resize', () => {
 });
 
 function initMap(lat, lng, showUserMarker = false) {
-  map = L.map('map').setView([lat, lng], 15);
+  map = L.map('map').setView([lat, lng], 17);
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
     maxZoom: 19,
