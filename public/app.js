@@ -288,7 +288,7 @@ function updateGlow() {
       const el = a.marker.getElement();
       if (el) {
         const d = distanceMeters(userLat, userLng, a.lat, a.lng);
-        const intensity = Math.max(0, 1 - d / (THRESHOLD_METERS * 2));
+        const intensity = Math.max(0, 1 - d / THRESHOLD_METERS);
         el.style.setProperty('--glow', intensity);
       }
     }
@@ -310,9 +310,9 @@ function updatePresence() {
   currentPresenceTarget = nearest;
   const angle = Math.atan2(nearest.lng - userLng, nearest.lat - userLat) * 180 / Math.PI;
   arrow.style.transform = `rotate(${angle}deg)`;
-  artworkDiv.classList.remove('hidden');
   artTitle.textContent = getTitle(nearest);
-  const ratio = Math.min(minDist / (THRESHOLD_METERS * 2), 1);
+  const ratio = Math.min(Math.max((minDist - THRESHOLD_METERS) / THRESHOLD_METERS, 0), 1);
+  artworkDiv.classList.toggle('hidden', ratio >= 1);
   if (nearest.type === 'audio') {
     artImage.classList.add('hidden');
     artAudio.classList.remove('hidden');
@@ -321,7 +321,11 @@ function updatePresence() {
       artAudio.loop = true;
     }
     artAudio.volume = 1 - ratio;
-    if (artAudio.paused) artAudio.play();
+    if (ratio < 1) {
+      if (artAudio.paused) artAudio.play();
+    } else {
+      artAudio.pause();
+    }
   } else {
     artAudio.classList.add('hidden');
     artImage.classList.remove('hidden');
