@@ -18,7 +18,6 @@ const translations = {
     clickNearby: "近くのマーカーをクリックすると作品を表示します。",
     noLocationSupport: "このブラウザは位置情報取得をサポートしていません。",
     unableToRetrieve: "位置情報を取得できません:",
-    currentLocation: "現在地",
     welcome: "ようこそ！",
     moveToView: "指定された場所に移動して作品を表示してください。",
     explore: "探索モード",
@@ -43,7 +42,6 @@ const translations = {
     clickNearby: "Click nearby markers to view artworks.",
     noLocationSupport: "This browser does not support geolocation.",
     unableToRetrieve: "Unable to retrieve location:",
-    currentLocation: "Current location",
     welcome: "Welcome!",
     moveToView: "Move to the specified location to view the artwork.",
     explore: "Explore Mode",
@@ -87,9 +85,6 @@ function updateTexts() {
   document.getElementById('post-btn').textContent = t('postButton');
   presenceToggle.textContent = artPresenceMode ? t('map') : t('explore');
   setStatus(currentStatusKey, currentStatusExtra);
-  if (userMarker) {
-    userMarker.bindPopup(t('currentLocation'));
-  }
   artworks.forEach(a => {
     if (a.marker) {
       a.marker.bindPopup(getTitle(a));
@@ -263,7 +258,7 @@ function initMap(lat, lng, showUserMarker = false) {
       color: 'red',
       fillColor: 'red',
       fillOpacity: 0.5
-    }).addTo(map).bindPopup(t('currentLocation')).openPopup();
+    }).addTo(map);
   }
   setStatus('clickNearby');
   updateGlow();
