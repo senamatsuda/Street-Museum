@@ -109,8 +109,8 @@ document.getElementById('language-select').addEventListener('change', e => {
 const DEFAULT_ARTWORKS = [
   {
     title: {
-      ja: "spring",
-      en: "春"
+      ja: "春",
+      en: "Spring"
     },
     lat: 34.398520,
     lng: 132.712508,
