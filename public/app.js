@@ -2,6 +2,7 @@ const translations = {
   ja: {
     title: "街角ミュージアム",
     map: "マップ",
+    mapMode: "マップモード",
     post: "投稿",
     postArtwork: "作品を投稿",
     newTitlePlaceholder: "タイトル",
@@ -26,6 +27,7 @@ const translations = {
   en: {
     title: "Street Museum",
     map: "Map",
+    mapMode: "Map Mode",
     post: "Post",
     postArtwork: "Post Artwork",
     newTitlePlaceholder: "Title",
@@ -83,7 +85,7 @@ function updateTexts() {
   document.getElementById('location-input').placeholder = t('searchLocationPlaceholder');
   searchBtn.textContent = t('searchButton');
   document.getElementById('post-btn').textContent = t('postButton');
-  presenceToggle.textContent = artPresenceMode ? t('map') : t('explore');
+  presenceToggle.textContent = artPresenceMode ? t('mapMode') : t('explore');
   setStatus(currentStatusKey, currentStatusExtra);
   artworks.forEach(a => {
     if (a.marker) {
@@ -384,6 +386,7 @@ presenceToggle.addEventListener('click', () => {
     if (currentPresenceTarget && currentPresenceTarget.type === 'audio') {
       artAudio.pause();
     }
+    status.classList.remove('hidden');
   }
   updateTexts();
   updatePresence();
@@ -456,6 +459,7 @@ if ('geolocation' in navigator) {
 
 function showArtwork(art) {
   const within = distanceMeters(userLat, userLng, art.lat, art.lng) < THRESHOLD_METERS;
+  status.classList.toggle('hidden', within);
   if (within) {
     setStatus('welcome');
     showWelcomeMessage();
