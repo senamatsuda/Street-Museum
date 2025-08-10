@@ -331,6 +331,7 @@ function updatePresence() {
   artDescription.textContent = getDescription(nearest);
   const within = minDist < THRESHOLD_METERS;
   arrow.classList.toggle('hidden', within);
+  status.classList.toggle('hidden', within);
   if (within && !presenceWithin) {
     showWelcomeMessage();
   }
