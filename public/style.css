@@ -151,8 +151,13 @@ img {
   transition: transform 0.2s linear;
 }
 
+#art-media {
+  position: relative;
+  display: inline-block;
+}
+
 #welcome-message {
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -164,6 +169,7 @@ img {
   opacity: 0;
   filter: blur(10px);
   transition: opacity 0.3s ease, filter 0.3s ease;
+  z-index: 1;
 }
 
 #welcome-message.show {
