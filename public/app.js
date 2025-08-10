@@ -330,6 +330,8 @@ function updatePresence() {
   }
   artDescription.textContent = getDescription(nearest);
   const within = minDist < THRESHOLD_METERS;
+  arrow.classList.toggle('hidden', within);
+  status.classList.toggle('hidden', within);
   if (within && !presenceWithin) {
     showWelcomeMessage();
   }
@@ -382,6 +384,7 @@ presenceToggle.addEventListener('click', () => {
     if (currentPresenceTarget && currentPresenceTarget.type === 'audio') {
       artAudio.pause();
     }
+    status.classList.remove('hidden');
   }
   updateTexts();
   updatePresence();
@@ -454,6 +457,7 @@ if ('geolocation' in navigator) {
 
 function showArtwork(art) {
   const within = distanceMeters(userLat, userLng, art.lat, art.lng) < THRESHOLD_METERS;
+  status.classList.toggle('hidden', within);
   if (within) {
     setStatus('welcome');
     showWelcomeMessage();
